@@ -16,9 +16,9 @@ const knexConection = knex(knexdatabaseConfig.development)
 const insertTelefone = async function (telefone)  {
     try {
         let sql = `insert into tbl_telefone(
-        telefone
+        numero
     ) values(
-        '${telefone.telefone}'
+        '${telefone.numero}'
         );`
 
         let result = await knexConection.raw(sql)
@@ -29,6 +29,7 @@ const insertTelefone = async function (telefone)  {
             return false
         
     } catch (error) {
+        console.log(error)
         return false
     }
 }

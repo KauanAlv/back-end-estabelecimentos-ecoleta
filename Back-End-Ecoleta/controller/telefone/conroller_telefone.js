@@ -13,8 +13,7 @@ const insertTelefone = async function (telefone, contentType) {
             if(validar){
                 return validar //400 
         }else {
-            let dadostratados = await tratardados(telefone)
-            let resultado = await telefoneDAO.insertTelefone(telefone)
+            let resultado = await telefoneDAO.insertTelefone(await tratardados(telefone))
             if(resultado){
                 telefone.id = resultado
 
@@ -25,6 +24,7 @@ const insertTelefone = async function (telefone, contentType) {
 
                 return modifiedmessage.DEFAULT_MESSAGE
             }else{
+                
                 return modifiedmessage.ERROR_INTERNAL_SERVER_MODEL //500 model
             }
         }
@@ -111,7 +111,7 @@ const listarTelefone = async function(){
     }
 }
 
-const buscarTelefone = async function(telefone, contentType, id){
+const buscarTelefone = async function(id){
     let modifiedmessage = JSON.parse(JSON.stringify(configmessages))
 
     try {
@@ -150,9 +150,9 @@ const validarDados = async function(telefone){
 
     let modifiedmessage = JSON.parse(JSON.stringify(configmessages))
 
-    if(telefone.telefone == undefined || telefone.telefone == '' || telefone.telefone.length > 25){
+    if(telefone.numero == undefined || telefone.numero == '' || telefone.numero.length > 25){
 
-        modifiedmessage.ERROR_BAD_REQUEST.field = '[TELEFONE] invalido, verifique se o campo foi preenchido corretamente'
+        modifiedmessage.ERROR_BAD_REQUEST.field = '[NUMERO] invalido'
         return modifiedmessage.ERROR_BAD_REQUEST //400 bad request
 
     } else {
@@ -162,12 +162,14 @@ const validarDados = async function(telefone){
 
 
 const tratardados = async function(telefone){
-    telefone.telefone = telefone.telefone.replaceAll("'", "")
+    telefone.numero = telefone.numero.replaceAll("'", "")
+
+    return telefone
 }
 
 module.exports ={
     insertTelefone,
-    updateTelefone,
+    atualizarTelefone,
     listarTelefone,
     buscarTelefone
 }

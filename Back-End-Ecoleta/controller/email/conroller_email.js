@@ -12,9 +12,8 @@ const insertEmail = async function (email, contentType) {
             
             if(validar){
                 return validar //400 
-        }else {
-            let dadostratados = await tratardados(email)
-            let resultado = await emailDAO.insertEmail(email)
+        }else { 
+            let resultado = await emailDAO.insertEmail(await tratardados(email))
             if(resultado){
                 email.id = resultado
 
