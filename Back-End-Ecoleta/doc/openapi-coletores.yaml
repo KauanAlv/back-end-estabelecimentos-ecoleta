@@ -1,0 +1,767 @@
+openapi: 3.0.3
+info:
+  title: Ecoleta - Backend da Empresa Coletora
+  description: |-
+   API consumida exclusivamente pelo app da Empresa Coletora. Quem envia
+   oferta é sempre a Empresa Coletora; o Estabelecimento só visualiza e
+   aceita/recusa (backend do Estabelecimento). Toda transição de status
+   (resíduo, oferta, coleta) é efeito colateral de uma ação de negócio
+   nomeada — nunca um PATCH genérico recebendo status em texto livre.
+   Cada tabela tbl_status_* é um lookup fixo (id, status); cada
+   tbl_status_*_historico guarda (id_referencia, id_status, data_hora),
+   resolvido para texto na resposta.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: contato@ecoleta.com.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http://
+tags:
+  - name: Auth
+  - name: Home
+  - name: Residuo
+  - name: Oferta
+  - name: Coleta
+  - name: Historico
+  - name: Perfil
+  - name: Auxiliar
+
+paths:
+
+  # ===================== AUTH =====================
+  /cadastro/empresa-coletora:
+    post:
+      tags: [Auth]
+      summary: Cadastra uma nova Empresa Coletora
+      requestBody:
+        description: JSON contendo os dados da nova empresa coletora
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpresaColetoraCreate'
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid input
+        '409':
+          description: Email ou CNPJ já cadastrado
+        '415':
+          description: Error Content-type
+        '500':
+          description: Error Internal Server
+
+  /login/empresa-coletora:
+    post:
+      tags: [Auth]
+      summary: Autentica uma Empresa Coletora
+      requestBody:
+        description: JSON contendo email e senha
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Invalid input
+        '401':
+          description: Invalid credentials
+        '415':
+          description: Error Content-type
+        '500':
+          description: Error Internal Server
+
+  /recuperar-senha/empresa-coletora:
+    post:
+      tags: [Auth]
+      summary: Solicita a recuperação de senha
+      description: >-
+        Gera token de recuperação. Depende de tabela ainda não existente
+        no CREATE atual (tbl_password_reset_token: id, token, id_conta,
+        tipo_conta, expira_em, usado) — aqui tipo_conta é gravado
+        internamente como 'empresa_coletora'.
+      requestBody:
+        description: JSON contendo o email da conta
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecuperarSenha'
+      responses:
+        '202':
+          description: successful operation
+        '400':
+          description: Invalid input
+        '404':
+          description: Not found
+        '500':
+          description: Error Internal Server
+
+  /redefinir-senha/empresa-coletora:
+    post:
+      tags: [Auth]
+      summary: Redefine a senha usando o token recebido
+      requestBody:
+        description: JSON contendo o token e a nova senha
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RedefinirSenha'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid or expired token
+        '500':
+          description: Error Internal Server
+
+  /logout/empresa-coletora:
+    post:
+      tags: [Auth]
+      summary: Encerra a sessão da Empresa Coletora autenticada
+      responses:
+        '200':
+          description: successful operation
+        '401':
+          description: Unauthorized
+        '500':
+          description: Error Internal Server
+
+  # ===================== HOME =====================
+  /empresas-coletoras/home:
+    get:
+      tags: [Home]
+      summary: Resumo da tela inicial da Empresa Coletora autenticada
+      description: >-
+        Equivalente conceitual a vw_home_estabelecimento, mas sob a ótica
+        da coletora (ofertas enviadas por status, coletas agendadas). O id
+        da empresa coletora vem do token, não é parâmetro de rota.
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HomeEmpresaColetora'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Error Internal Server
+
+  # ===================== RESIDUO (marketplace, somente leitura) =====================
+  /empresas-coletoras/residuos:
+    get:
+      tags: [Residuo]
+      summary: Lista os Resíduos disponíveis no marketplace
+      description: >-
+        Somente leitura — a Empresa Coletora nunca cria/edita resíduo, só
+        envia oferta sobre ele. Cada item já traz os dados do
+        Estabelecimento dono e, se já calculada, a distância em tbl_distancia.
+      parameters:
+        - name: id_tipo_material
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: id_cidade
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: status
+          in: query
+          description: "Por padrão retorna só 'Disponível'"
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResiduoMarketplace'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '500':
+          description: Error Internal Server
+
+  /empresas-coletoras/residuos/{id}:
+    get:
+      tags: [Residuo]
+      summary: Busca um Resíduo do marketplace pelo ID
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResiduoMarketplace'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Error Internal Server
+
+  # ===================== OFERTA =====================
+  /empresas-coletoras/ofertas:
+    post:
+      tags: [Oferta]
+      summary: Envia uma nova Oferta para um Resíduo
+      description: >-
+        Cria tbl_oferta_inicial (id_empresa_coletora vem do token) e o
+        primeiro registro em tbl_status_oferta_historico apontando para o
+        status 'Pendente'. Se não existir registro em tbl_distancia para
+        o par (estabelecimento dono do resíduo, empresa coletora do
+        token), o backend deve calculá-lo e inseri-lo antes de responder.
+      requestBody:
+        description: JSON contendo os dados da nova oferta
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfertaCreate'
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid input
+        '404':
+          description: Resíduo não encontrado, ou não está com status Disponível
+        '415':
+          description: Error Content-type
+        '500':
+          description: Error Internal Server
+    get:
+      tags: [Oferta]
+      summary: Lista as Ofertas enviadas pela Empresa Coletora autenticada
+      parameters:
+        - name: status
+          in: query
+          description: 'Pendente, Aceita ou Recusada'
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Oferta'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '500':
+          description: Error Internal Server
+
+  /empresas-coletoras/ofertas/{id}:
+    get:
+      tags: [Oferta]
+      summary: Busca uma Oferta enviada pelo ID
+      description: Útil para acompanhar se uma oferta enviada já foi aceita ou recusada.
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Oferta'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Error Internal Server
+
+  # ===================== COLETA =====================
+  /empresas-coletoras/coletas:
+    get:
+      tags: [Coleta]
+      summary: Lista as Coletas da Empresa Coletora autenticada
+      parameters:
+        - name: status
+          in: query
+          description: 'Agendada ou Concluída'
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Coleta'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '500':
+          description: Error Internal Server
+
+  /empresas-coletoras/coletas/{id}:
+    get:
+      tags: [Coleta]
+      summary: Busca uma Coleta pelo ID
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Coleta'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Error Internal Server
+    put:
+      tags: [Coleta]
+      summary: Preenche os dados de execução da Coleta
+      description: >-
+        Só a Empresa Coletora edita nome_coletor, placa_veiculo,
+        data_coleta e hora_coleta — o Estabelecimento tem acesso somente
+        de leitura a esses campos. Este endpoint NÃO altera o status da
+        coleta; usar PUT /empresas-coletoras/coletas/{id}/concluir para isso.
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      requestBody:
+        description: Dados de execução da coleta
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ColetaUpdate'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '409':
+          description: Coleta já está Concluída, não pode mais ser editada
+        '415':
+          description: Invalid Content-Type
+        '500':
+          description: Error Internal Server
+
+  /empresas-coletoras/coletas/{id}/concluir:
+    put:
+      tags: [Coleta]
+      summary: Marca a Coleta como Concluída
+      description: >-
+        Em transação:
+        1. INSERT tbl_status_coleta_historico  -> id_status 'Concluída'
+        2. INSERT tbl_status_residuo_historico -> id_status 'Concluído'
+           (efeito colateral no resíduo associado, que a partir daqui some
+           da listagem de resíduos do Estabelecimento)
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Coleta'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '409':
+          description: Coleta já está Concluída
+        '500':
+          description: Error Internal Server
+
+  # ===================== HISTORICO =====================
+  /empresas-coletoras/historico:
+    get:
+      tags: [Historico]
+      summary: Feed de atividades da Empresa Coletora autenticada
+      description: >-
+        Endpoint de leitura agregada (UNION de tbl_status_oferta_historico
+        + tbl_status_coleta_historico, filtrado pelas ofertas/coletas da
+        empresa coletora do token), sem tabela correspondente única.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HistoricoEvento'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '500':
+          description: Error Internal Server
+
+  # ===================== PERFIL =====================
+  /empresas-coletoras/perfil:
+    get:
+      tags: [Perfil]
+      summary: Retorna o perfil da Empresa Coletora autenticada
+      description: Equivale a vw_perfil_empresa_coletora.
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpresaColetora'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Error Internal Server
+    put:
+      tags: [Perfil]
+      summary: Atualiza o perfil da Empresa Coletora autenticada
+      requestBody:
+        description: Dados para atualizar o perfil
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpresaColetora'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+        '415':
+          description: Invalid Content-Type
+        '500':
+          description: Error Internal Server
+
+  /empresas-coletoras/perfil/senha:
+    put:
+      tags: [Perfil]
+      summary: Troca a senha da Empresa Coletora autenticada
+      requestBody:
+        description: JSON contendo a senha atual e a nova senha
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerfilSenha'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Senha atual incorreta
+        '401':
+          description: Unauthorized
+        '415':
+          description: Invalid Content-Type
+        '500':
+          description: Error Internal Server
+
+  # ===================== AUXILIAR =====================
+  /tipos-materiais:
+    get:
+      tags: [Auxiliar]
+      summary: Lista todos os Tipos de Material
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TipoMaterial'
+        '404':
+          description: Not Found
+        '500':
+          description: Error Internal Server
+
+  /cep/{cep}:
+    get:
+      tags: [Auxiliar]
+      summary: Resolve um CEP em endereço completo, via Google Geocoding API
+      description: >-
+        Não consulta tabela local do CEP em si; devolve latitude/longitude
+        prontos e id_cidade/id_estado já resolvidos (com upsert interno em
+        tbl_cidade/tbl_estado se ainda não existirem), prontos para uso no
+        cadastro/edição de endereço.
+      parameters:
+        - name: cep
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "06653-000"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CepResolvido'
+        '400':
+          description: CEP em formato inválido
+        '404':
+          description: CEP não encontrado pela Google Geocoding API
+        '502':
+          description: Falha ao consultar a API do Google
+        '500':
+          description: Error Internal Server
+
+components:
+  parameters:
+    idPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+  schemas:
+    Endereco:
+      required: [cep, logradouro, numero, bairro, id_cidade]
+      type: object
+      properties:
+        id: { type: integer }
+        cep: { type: string, maxLength: 12, example: "06653-000" }
+        logradouro: { type: string, maxLength: 100 }
+        numero: { type: integer }
+        bairro: { type: string, maxLength: 80 }
+        latitude: { type: number, format: double }
+        longitude: { type: number, format: double }
+        id_cidade: { type: integer }
+
+    TipoMaterial:
+      type: object
+      properties:
+        id: { type: integer }
+        material: { type: string, maxLength: 50, example: "Metal" }
+
+    EmpresaColetora:
+      required: [nome, cnpj, email, endereco]
+      type: object
+      properties:
+        id: { type: integer }
+        nome: { type: string, maxLength: 100 }
+        cnpj: { type: string, maxLength: 25 }
+        email: { type: string, format: email, maxLength: 256 }
+        telefone: { type: string, maxLength: 25 }
+        endereco:
+          $ref: '#/components/schemas/Endereco'
+
+    EmpresaColetoraCreate:
+      allOf:
+        - $ref: '#/components/schemas/EmpresaColetora'
+        - type: object
+          required: [senha]
+          properties:
+            senha: { type: string, format: password, minLength: 8 }
+
+    # Resíduo visto pela ótica da coletora: sempre inclui o dono e a distância
+    ResiduoMarketplace:
+      type: object
+      properties:
+        id: { type: integer }
+        horario_inicial: { type: string, format: time }
+        horario_final: { type: string, format: time }
+        quantidade: { type: number, format: double }
+        data_disponivel: { type: string, format: date }
+        observacao: { type: string }
+        tipo_material:
+          $ref: '#/components/schemas/TipoMaterial'
+        status_atual:
+          type: string
+          enum: [Disponível]
+          description: O marketplace só deve listar resíduos Disponível por padrão
+        estabelecimento:
+          type: object
+          properties:
+            id: { type: integer }
+            nome: { type: string }
+            endereco:
+              $ref: '#/components/schemas/Endereco'
+        distancia_km:
+          type: number
+          format: double
+          nullable: true
+          description: >-
+            Vem de tbl_distancia para o par (este estabelecimento, a
+            empresa coletora do token); nulo se ainda não calculada
+
+    OfertaCreate:
+      required: [valor_ofertado, nome_ofertante, id_residuo]
+      type: object
+      properties:
+        valor_ofertado: { type: number, format: double, example: 150.00 }
+        nome_ofertante: { type: string, maxLength: 100 }
+        id_residuo: { type: integer }
+
+    Oferta:
+      type: object
+      properties:
+        id: { type: integer }
+        valor_ofertado: { type: number, format: double }
+        nome_ofertante: { type: string }
+        data_hora_oferta: { type: string, format: date-time }
+        status_atual:
+          type: string
+          enum: [Pendente, Aceita, Recusada]
+        residuo:
+          $ref: '#/components/schemas/ResiduoMarketplace'
+        coleta_id:
+          type: integer
+          nullable: true
+          description: Preenchido somente depois que a oferta é aceita
+
+    Coleta:
+      type: object
+      properties:
+        id: { type: integer }
+        nome_coletor: { type: string, nullable: true }
+        placa_veiculo: { type: string, nullable: true }
+        data_coleta: { type: string, format: date, nullable: true }
+        hora_coleta: { type: string, format: time, nullable: true }
+        id_oferta_final: { type: integer }
+        status_atual:
+          type: string
+          enum: [Agendada, Concluída]
+        residuo:
+          $ref: '#/components/schemas/ResiduoMarketplace'
+
+    ColetaUpdate:
+      type: object
+      properties:
+        nome_coletor: { type: string, maxLength: 100 }
+        placa_veiculo: { type: string, maxLength: 12 }
+        data_coleta: { type: string, format: date }
+        hora_coleta: { type: string, format: time }
+
+    HistoricoEvento:
+      type: object
+      properties:
+        tipo:
+          type: string
+          enum: [oferta, coleta]
+        id_referencia: { type: integer }
+        status: { type: string }
+        data_hora_status: { type: string, format: date-time }
+
+    HomeEmpresaColetora:
+      type: object
+      properties:
+        ofertas_pendentes: { type: integer }
+        ofertas_aceitas: { type: integer }
+        ofertas_recusadas: { type: integer }
+        coletas_agendadas: { type: integer }
+        coletas_concluidas: { type: integer }
+        ofertas_recentes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Oferta'
+
+    Login:
+      required: [email, senha]
+      type: object
+      properties:
+        email: { type: string, format: email }
+        senha: { type: string, format: password }
+
+    LoginResponse:
+      type: object
+      properties:
+        accessToken: { type: string }
+        refreshToken: { type: string }
+
+    RecuperarSenha:
+      required: [email]
+      type: object
+      properties:
+        email: { type: string, format: email }
+
+    RedefinirSenha:
+      required: [token, nova_senha]
+      type: object
+      properties:
+        token: { type: string }
+        nova_senha: { type: string, format: password, minLength: 8 }
+
+    PerfilSenha:
+      required: [senha_atual, nova_senha]
+      type: object
+      properties:
+        senha_atual: { type: string, format: password }
+        nova_senha: { type: string, format: password, minLength: 8 }
+
+    CepResolvido:
+      type: object
+      properties:
+        cep: { type: string }
+        logradouro: { type: string }
+        bairro: { type: string }
+        latitude: { type: number, format: double }
+        longitude: { type: number, format: double }
+        id_cidade: { type: integer }
+        nome_cidade: { type: string }
+        id_estado: { type: integer }
+        sigla_estado: { type: string }
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

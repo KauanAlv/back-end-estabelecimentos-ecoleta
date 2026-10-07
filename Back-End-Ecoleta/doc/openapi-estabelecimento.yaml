@@ -1,0 +1,816 @@
+openapi: 3.0.3
+info:
+  title: Ecoleta - Backend do Estabelecimento
+  description: |-
+   API consumida exclusivamente pelo app do Estabelecimento. Toda transição
+   de status (resíduo, oferta, coleta) é efeito colateral de uma ação de
+   negócio nomeada (aceitar, recusar, cancelar, concluir) — nunca um PATCH
+   genérico recebendo status em texto livre. Cada tabela tbl_status_* é um
+   lookup fixo (id, status); cada tbl_status_*_historico guarda
+   (id_referencia, id_status, data_hora), resolvido para texto na resposta.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: contato@ecoleta.com.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http://
+tags:
+  - name: Auth
+  - name: Home
+  - name: Residuo
+  - name: Oferta
+  - name: Coleta
+  - name: Historico
+  - name: Perfil
+  - name: Auxiliar
+
+paths:
+
+  # ===================== AUTH =====================
+  /cadastro/estabelecimento:
+    post:
+      tags: [Auth]
+      summary: Cadastra um novo Estabelecimento
+      requestBody:
+        description: JSON contendo os dados do novo estabelecimento
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstabelecimentoCreate'
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid input
+        '409':
+          description: Email ou CNPJ já cadastrado
+        '415':
+          description: Error Content-type
+        '500':
+          description: Error Internal Server
+
+  /login/estabelecimento:
+    post:
+      tags: [Auth]
+      summary: Autentica um Estabelecimento
+      requestBody:
+        description: JSON contendo email e senha
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Invalid input
+        '401':
+          description: Invalid credentials
+        '415':
+          description: Error Content-type
+        '500':
+          description: Error Internal Server
+
+  /recuperar-senha/estabelecimento:
+    post:
+      tags: [Auth]
+      summary: Solicita a recuperação de senha
+      description: >-
+        Gera token de recuperação. Depende de tabela ainda não existente
+        no CREATE atual (tbl_password_reset_token: id, token, id_conta,
+        tipo_conta, expira_em, usado) — aqui tipo_conta é gravado
+        internamente como 'estabelecimento'.
+      requestBody:
+        description: JSON contendo o email da conta
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecuperarSenha'
+      responses:
+        '202':
+          description: successful operation
+        '400':
+          description: Invalid input
+        '404':
+          description: Not found
+        '500':
+          description: Error Internal Server
+
+  /redefinir-senha/estabelecimento:
+    post:
+      tags: [Auth]
+      summary: Redefine a senha usando o token recebido
+      requestBody:
+        description: JSON contendo o token e a nova senha
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RedefinirSenha'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid or expired token
+        '500':
+          description: Error Internal Server
+
+  /logout/estabelecimento:
+    post:
+      tags: [Auth]
+      summary: Encerra a sessão do Estabelecimento autenticado
+      responses:
+        '200':
+          description: successful operation
+        '401':
+          description: Unauthorized
+        '500':
+          description: Error Internal Server
+
+  # ===================== HOME =====================
+  /estabelecimentos/home:
+    get:
+      tags: [Home]
+      summary: Resumo da tela inicial do Estabelecimento autenticado
+      description: >-
+        Equivale a vw_home_estabelecimento + vw_home_ofertas_estabelecimento.
+        O id do estabelecimento vem do token, não é parâmetro de rota.
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HomeEstabelecimento'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Error Internal Server
+
+  # ===================== RESIDUO =====================
+  /estabelecimentos/residuos:
+    get:
+      tags: [Residuo]
+      summary: Lista os Resíduos do Estabelecimento autenticado
+      parameters:
+        - name: status
+          in: query
+          description: 'Disponível, Agendado, Concluído ou Cancelado'
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Residuo'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '500':
+          description: Error Internal Server
+    post:
+      tags: [Residuo]
+      summary: Cadastra um novo Resíduo
+      description: >-
+        Cria tbl_residuo (id_estabelecimento vem do token) e o primeiro
+        registro em tbl_status_residuo_historico apontando para o status
+        'Disponível'.
+      requestBody:
+        description: JSON contendo os dados do novo resíduo
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResiduoCreate'
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid input
+        '415':
+          description: Error Content-type
+        '500':
+          description: Error Internal Server
+
+  /estabelecimentos/residuos/{id}:
+    get:
+      tags: [Residuo]
+      summary: Busca um Resíduo pelo ID
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Residuo'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Error Internal Server
+    put:
+      tags: [Residuo]
+      summary: Atualiza os dados de um Resíduo
+      description: >-
+        Só permitido enquanto o último status do resíduo for 'Disponível'
+        (ou seja, sem oferta aceita/coleta atrelada). Se o resíduo já
+        estiver 'Agendado' ou 'Concluído', retorna 409.
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      requestBody:
+        description: Dados para atualizar o resíduo
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResiduoCreate'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '409':
+          description: Resíduo não está com status Disponível, não pode ser editado
+        '415':
+          description: Invalid Content-Type
+        '500':
+          description: Error Internal Server
+
+  /estabelecimentos/residuos/{id}/cancelar:
+    put:
+      tags: [Residuo]
+      summary: Cancela um Resíduo
+      description: >-
+        Insere em tbl_status_residuo_historico apontando para 'Cancelado'.
+        Não é um DELETE físico — o registro permanece no banco para
+        histórico. Só permitido enquanto o último status for 'Disponível'
+        (mesma regra do PUT); se já houver oferta aceita/coleta atrelada,
+        retorna 409.
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Residuo'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '409':
+          description: Resíduo não está com status Disponível, não pode ser cancelado
+        '500':
+          description: Error Internal Server
+
+  # ===================== OFERTA =====================
+  /estabelecimentos/ofertas:
+    get:
+      tags: [Oferta]
+      summary: Lista as Ofertas recebidas pelo Estabelecimento autenticado
+      description: Quem envia a oferta é sempre a Empresa Coletora; aqui o Estabelecimento só visualiza.
+      parameters:
+        - name: status
+          in: query
+          description: 'Pendente, Aceita ou Recusada'
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Oferta'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '500':
+          description: Error Internal Server
+
+  /estabelecimentos/ofertas/{id}:
+    get:
+      tags: [Oferta]
+      summary: Busca uma Oferta recebida pelo ID
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Oferta'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Error Internal Server
+
+  /estabelecimentos/ofertas/{id}/aceitar:
+    put:
+      tags: [Oferta]
+      summary: Aceita uma Oferta recebida
+      description: >-
+        Valida que o estabelecimento do token é dono do resíduo associado
+        à oferta (via oferta_inicial -> residuo); retorna 403 se não for.
+        Em transação:
+        1. INSERT tbl_oferta_aceita
+        2. INSERT tbl_oferta_final (liga oferta_inicial + oferta_aceita)
+        3. INSERT tbl_status_oferta_historico  -> id_status 'Aceita'
+        4. INSERT tbl_status_residuo_historico -> id_status 'Agendado'
+        5. INSERT tbl_coleta (id_oferta_final)
+        6. INSERT tbl_status_coleta_historico  -> id_status 'Agendada'
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      requestBody:
+        description: JSON contendo o nome de quem está aceitando
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfertaAceitar'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  oferta:
+                    $ref: '#/components/schemas/Oferta'
+                  coleta:
+                    $ref: '#/components/schemas/Coleta'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Unauthorized
+        '403':
+          description: O estabelecimento autenticado não é dono do resíduo desta oferta
+        '404':
+          description: Not found
+        '409':
+          description: Oferta já foi aceita ou recusada anteriormente
+        '500':
+          description: Error Internal Server
+
+  /estabelecimentos/ofertas/{id}/recusar:
+    put:
+      tags: [Oferta]
+      summary: Recusa uma Oferta recebida
+      description: >-
+        Insere apenas tbl_status_oferta_historico -> id_status 'Recusada'.
+        Não altera o status do resíduo (segue 'Disponível', elegível a
+        outras ofertas). Mesma validação de posse do endpoint /aceitar.
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Unauthorized
+        '403':
+          description: O estabelecimento autenticado não é dono do resíduo desta oferta
+        '404':
+          description: Not found
+        '409':
+          description: Oferta já foi aceita ou recusada anteriormente
+        '500':
+          description: Error Internal Server
+
+  # ===================== COLETA =====================
+  /estabelecimentos/coletas:
+    get:
+      tags: [Coleta]
+      summary: Lista as Coletas do Estabelecimento autenticado
+      description: >-
+        Somente leitura — os dados de execução (nome_coletor, veículo,
+        data/hora) e a mudança de status são de responsabilidade exclusiva
+        da Empresa Coletora.
+      parameters:
+        - name: status
+          in: query
+          description: 'Agendada ou Concluída'
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Coleta'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '500':
+          description: Error Internal Server
+
+  /estabelecimentos/coletas/{id}:
+    get:
+      tags: [Coleta]
+      summary: Busca uma Coleta pelo ID
+      parameters:
+        - $ref: '#/components/parameters/idPath'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Coleta'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Error Internal Server
+
+  # ===================== HISTORICO =====================
+  /estabelecimentos/historico:
+    get:
+      tags: [Historico]
+      summary: Feed de atividades do Estabelecimento autenticado
+      description: >-
+        Endpoint de leitura agregada (UNION de tbl_status_residuo_historico
+        + tbl_status_oferta_historico + tbl_status_coleta_historico,
+        filtrado pelos resíduos do estabelecimento do token), sem tabela
+        correspondente única.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HistoricoEvento'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '500':
+          description: Error Internal Server
+
+  # ===================== PERFIL =====================
+  /estabelecimentos/perfil:
+    get:
+      tags: [Perfil]
+      summary: Retorna o perfil do Estabelecimento autenticado
+      description: Equivale a vw_perfil_estabelecimento.
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estabelecimento'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Error Internal Server
+    put:
+      tags: [Perfil]
+      summary: Atualiza o perfil do Estabelecimento autenticado
+      requestBody:
+        description: Dados para atualizar o perfil
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Estabelecimento'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+        '415':
+          description: Invalid Content-Type
+        '500':
+          description: Error Internal Server
+
+  /estabelecimentos/perfil/senha:
+    put:
+      tags: [Perfil]
+      summary: Troca a senha do Estabelecimento autenticado
+      requestBody:
+        description: JSON contendo a senha atual e a nova senha
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerfilSenha'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Senha atual incorreta
+        '401':
+          description: Unauthorized
+        '415':
+          description: Invalid Content-Type
+        '500':
+          description: Error Internal Server
+
+  # ===================== AUXILIAR =====================
+  /tipos-materiais:
+    get:
+      tags: [Auxiliar]
+      summary: Lista todos os Tipos de Material
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TipoMaterial'
+        '404':
+          description: Not Found
+        '500':
+          description: Error Internal Server
+
+  /cep/{cep}:
+    get:
+      tags: [Auxiliar]
+      summary: Resolve um CEP em endereço completo, via Google Geocoding API
+      description: >-
+        Não consulta tabela local do CEP em si; devolve latitude/longitude
+        prontos e id_cidade/id_estado já resolvidos (com upsert interno em
+        tbl_cidade/tbl_estado se ainda não existirem), prontos para uso no
+        cadastro/edição de endereço.
+      parameters:
+        - name: cep
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "06401-000"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CepResolvido'
+        '400':
+          description: CEP em formato inválido
+        '404':
+          description: CEP não encontrado pela Google Geocoding API
+        '502':
+          description: Falha ao consultar a API do Google
+        '500':
+          description: Error Internal Server
+
+components:
+  parameters:
+    idPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+  schemas:
+    Endereco:
+      required: [cep, logradouro, numero, bairro, id_cidade]
+      type: object
+      properties:
+        id: { type: integer }
+        cep: { type: string, maxLength: 12, example: "06401-000" }
+        logradouro: { type: string, maxLength: 100 }
+        numero: { type: integer }
+        bairro: { type: string, maxLength: 80 }
+        latitude: { type: number, format: double }
+        longitude: { type: number, format: double }
+        id_cidade: { type: integer }
+
+    TipoMaterial:
+      type: object
+      properties:
+        id: { type: integer }
+        material: { type: string, maxLength: 50, example: "Papelão" }
+
+    Estabelecimento:
+      required: [nome, cnpj, email, endereco]
+      type: object
+      properties:
+        id: { type: integer }
+        nome: { type: string, maxLength: 100 }
+        cnpj: { type: string, maxLength: 25 }
+        email: { type: string, format: email, maxLength: 256 }
+        telefone: { type: string, maxLength: 25 }
+        endereco:
+          $ref: '#/components/schemas/Endereco'
+
+    EstabelecimentoCreate:
+      allOf:
+        - $ref: '#/components/schemas/Estabelecimento'
+        - type: object
+          required: [senha]
+          properties:
+            senha: { type: string, format: password, minLength: 8 }
+
+    Residuo:
+      required: [horario_inicial, horario_final, quantidade, data_disponivel, id_tipo_material]
+      type: object
+      properties:
+        id: { type: integer }
+        horario_inicial: { type: string, format: time, example: "08:00:00" }
+        horario_final: { type: string, format: time, example: "12:00:00" }
+        quantidade: { type: number, format: double }
+        data_disponivel: { type: string, format: date }
+        observacao: { type: string }
+        id_tipo_material: { type: integer }
+        tipo_material:
+          $ref: '#/components/schemas/TipoMaterial'
+        status_atual:
+          type: string
+          description: Derivado do último registro em tbl_status_residuo_historico
+          enum: [Disponível, Agendado, Concluído, Cancelado]
+
+    ResiduoCreate:
+      required: [horario_inicial, horario_final, quantidade, data_disponivel, id_tipo_material]
+      type: object
+      properties:
+        horario_inicial: { type: string, format: time }
+        horario_final: { type: string, format: time }
+        quantidade: { type: number, format: double }
+        data_disponivel: { type: string, format: date }
+        observacao: { type: string }
+        id_tipo_material: { type: integer }
+
+    Oferta:
+      type: object
+      properties:
+        id: { type: integer }
+        valor_ofertado: { type: number, format: double }
+        nome_ofertante: { type: string }
+        data_hora_oferta: { type: string, format: date-time }
+        status_atual:
+          type: string
+          enum: [Pendente, Aceita, Recusada]
+        empresa_coletora:
+          type: object
+          properties:
+            id: { type: integer }
+            nome: { type: string }
+        residuo:
+          $ref: '#/components/schemas/Residuo'
+        coleta_id:
+          type: integer
+          nullable: true
+          description: Preenchido somente depois que a oferta é aceita
+
+    OfertaAceitar:
+      required: [nome_aceitante]
+      type: object
+      properties:
+        nome_aceitante: { type: string, maxLength: 100 }
+
+    Coleta:
+      type: object
+      properties:
+        id: { type: integer }
+        nome_coletor: { type: string, nullable: true }
+        placa_veiculo: { type: string, nullable: true }
+        data_coleta: { type: string, format: date, nullable: true }
+        hora_coleta: { type: string, format: time, nullable: true }
+        id_oferta_final: { type: integer }
+        status_atual:
+          type: string
+          enum: [Agendada, Concluída]
+        residuo:
+          $ref: '#/components/schemas/Residuo'
+
+    HistoricoEvento:
+      type: object
+      properties:
+        tipo:
+          type: string
+          enum: [residuo, oferta, coleta]
+        id_referencia: { type: integer }
+        status: { type: string }
+        data_hora_status: { type: string, format: date-time }
+
+    HomeEstabelecimento:
+      type: object
+      properties:
+        residuos_disponiveis: { type: integer }
+        soma_total_quantidade: { type: number }
+        ofertas_recebidas: { type: integer }
+        coletas_agendadas: { type: integer }
+        ofertas_pendentes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Oferta'
+
+    Login:
+      required: [email, senha]
+      type: object
+      properties:
+        email: { type: string, format: email }
+        senha: { type: string, format: password }
+
+    LoginResponse:
+      type: object
+      properties:
+        accessToken: { type: string }
+        refreshToken: { type: string }
+
+    RecuperarSenha:
+      required: [email]
+      type: object
+      properties:
+        email: { type: string, format: email }
+
+    RedefinirSenha:
+      required: [token, nova_senha]
+      type: object
+      properties:
+        token: { type: string }
+        nova_senha: { type: string, format: password, minLength: 8 }
+
+    PerfilSenha:
+      required: [senha_atual, nova_senha]
+      type: object
+      properties:
+        senha_atual: { type: string, format: password }
+        nova_senha: { type: string, format: password, minLength: 8 }
+
+    CepResolvido:
+      type: object
+      properties:
+        cep: { type: string }
+        logradouro: { type: string }
+        bairro: { type: string }
+        latitude: { type: number, format: double }
+        longitude: { type: number, format: double }
+        id_cidade: { type: integer }
+        nome_cidade: { type: string }
+        id_estado: { type: integer }
+        sigla_estado: { type: string }
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
