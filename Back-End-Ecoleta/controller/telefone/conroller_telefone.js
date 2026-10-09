@@ -1,3 +1,11 @@
+/**************************************************************************************
+ * objetivo: arquivo responsavel por manipular os dados de telefone no banco de dados
+ * data: 06/10/2026
+ * autor: Gabriel Renato
+ * versão: 1.1
+ **************************************************************************************/
+
+
 const configmessages = require('../modulo/configMessages.js')
 
 const telefoneDAO = require('../../model/DAO/telefone/telefone.js')
@@ -150,7 +158,7 @@ const validarDados = async function(telefone){
 
     let modifiedmessage = JSON.parse(JSON.stringify(configmessages))
 
-    if(telefone.numero == undefined || telefone.numero == '' || telefone.numero.length > 25){
+    if(telefone.numero == undefined || telefone.numero == null || telefone.numero == '' || isNaN(telefone.numero) || telefone.numero.length > 25){
 
         modifiedmessage.ERROR_BAD_REQUEST.field = '[NUMERO] invalido'
         return modifiedmessage.ERROR_BAD_REQUEST //400 bad request

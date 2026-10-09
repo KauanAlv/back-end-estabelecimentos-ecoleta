@@ -1,6 +1,6 @@
 /**************************************************************************************
- * objetivo: arquivo responsavel por manipular os dados de email no banco de dados
- * data: 06/10/2026
+ * objetivo: arquivo responsavel por ser a API
+ * data: 07/10/2026
  * autor: Gabriel Renato
  * versão: 1.0
  **************************************************************************************/
@@ -28,11 +28,13 @@ app.use(cors(corsOptions))
 //import das controller provisório
 const controllerEmail = require('./controller/email/conroller_email.js')
 const controllerTelefone = require('./controller/telefone/conroller_telefone')
+const controllerEstado = require('./controller/estado/controller_estado.js')
+const controllerCidade = require('./controller/cidade/controller_cidade.js')
 
 app.post('/cadastro/estabelecimento/Telefone', bodyparserJSON, async function(request, response){
     let dados = request.body
     let contenType = request.headers['content-type']
-    let result = await controllerTelefone.insertTelefone(dados,contenType)
+    let result = await controllerCidade.inserirCidade(dados,contenType)
 
     response.status (result.status_code)
     response.json(result)

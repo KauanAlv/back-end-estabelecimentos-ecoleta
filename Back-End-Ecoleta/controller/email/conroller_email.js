@@ -1,3 +1,10 @@
+/**************************************************************************************
+ * objetivo: arquivo responsavel por manipular os dados de email no banco de dados
+ * data: 06/10/2026
+ * autor: Gabriel Renato
+ * versão: 1.1
+ **************************************************************************************/
+
 const configmessages = require('../modulo/configMessages.js')
 
 const emailDAO = require('../../model/DAO/email/email.js')
@@ -149,7 +156,7 @@ const validarDados = async function(email){
 
     let modifiedmessage = JSON.parse(JSON.stringify(configmessages))
 
-    if(email.email == undefined || email.email == '' || email.email.length > 256){
+    if(email.email == undefined || email.email == null || email.email == '' || email.email.length > 256){
 
         modifiedmessage.ERROR_BAD_REQUEST.field = '[EMAIL] invalido, verifique se o campo foi preenchido corretamente'
         return modifiedmessage.ERROR_BAD_REQUEST //400 bad request
