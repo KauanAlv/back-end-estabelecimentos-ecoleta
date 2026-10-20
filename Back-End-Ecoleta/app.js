@@ -5,6 +5,7 @@
  * versão: 1.0
  **************************************************************************************/
 
+require('dotenv').config()
 
 const express   = require ('express')
 const cors      = require ('cors')
@@ -60,7 +61,7 @@ app.get('/cadastro/estabelecimento/:id', bodyparserJSON, async function(request,
 
 
 app.get('/cadastro/estabelecimento', bodyparserJSON, async function(request, response){
-    let result = await controllerCidade.buscarTodosCidades()
+    let result = await controllerCidade.listarCidade()
 
     response.status (result.status_code)
     response.json(result)

@@ -5,7 +5,7 @@
  * versão: 1.0
  **************************************************************************************/
 
-const configmessages = require('../modulo/configMessages.js')
+const configMessages = require('../modulo/configMessages.js')
 // IMPORT DA SERVICE
 const cidadeService = require('../../services/cidade/services_cidade.js')
 

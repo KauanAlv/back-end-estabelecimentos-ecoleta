@@ -116,6 +116,7 @@ const listarCidadeService = async function () {
         }
 
     } catch (error) {
+        console.log(error)
         return customMessages.ERROR_INTERNAL_SERVER_SERVICES // 500, na services
     }
 }

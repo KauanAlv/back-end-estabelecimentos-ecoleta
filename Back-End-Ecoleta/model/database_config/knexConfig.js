@@ -3,12 +3,11 @@ module.exports = {
       // ⚠️ ALTERAÇÃO: Define o cliente como 'mysql2'
       client: 'mysql2',
       connection: {
-        host: 'localhost',
-        user: 'root', // Substitua pelo seu usuário
-        password: 'bcd127', // Substitua pela sua senha
-        database: 'db_tcc_ecoleta',
-        port: 3306, // Porta padrão do MySQL
-       
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_DATABASE,
+        port: process.env.DB_PORT,
         // Opcional: Define charset (recomendado para UTF8)
         charset: 'utf8mb4'
       },
