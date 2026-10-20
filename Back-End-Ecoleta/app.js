@@ -40,7 +40,7 @@ app.post('/cadastro/estabelecimento/Telefone', bodyparserJSON, async function(re
     response.json(result)
 })
 
-app.put('/cadastro/estabelecimento/Telefone', bodyparserJSON, async function(request, response){
+app.put('/cadastro/estabelecimento/:id', bodyparserJSON, async function(request, response){
     let dados = request.body
     let contenType = request.headers['content-type']
     let result = await controllerTelefone.insertTelefone(dados,contenType)
@@ -49,7 +49,7 @@ app.put('/cadastro/estabelecimento/Telefone', bodyparserJSON, async function(req
     response.json(result)
 })
 
-app.get('/cadastro/estabelecimento/Email/:id', bodyparserJSON, async function(request, response){
+app.get('/cadastro/estabelecimento/:id', bodyparserJSON, async function(request, response){
     let id = request.params.id
 
     let result = await controllerTelefone.buscarTelefone(id)
@@ -59,8 +59,8 @@ app.get('/cadastro/estabelecimento/Email/:id', bodyparserJSON, async function(re
 })
 
 
-app.get('/cadastro/estabelecimento/Email', bodyparserJSON, async function(request, response){
-    let result = await controllerTelefone.listarTelefone()
+app.get('/cadastro/estabelecimento', bodyparserJSON, async function(request, response){
+    let result = await controllerCidade.buscarTodosCidades()
 
     response.status (result.status_code)
     response.json(result)
