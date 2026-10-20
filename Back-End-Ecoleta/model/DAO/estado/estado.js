@@ -2,7 +2,7 @@
  * objetivo: arquivo responsavel por manipular os dados do Estado no banco de dados
  * data: 09/10/2026
  * autor: Gabriel Renato
- * versão: 1.0
+ * versão: 2.0
  **************************************************************************************/
 
 
@@ -13,53 +13,105 @@ const knex = require('knex')
 const knexdatabaseConfig = require('../../database_config/knexConfig.js')
 const knexConection = knex(knexdatabaseConfig.development)
 
-const insertEstado = async function (estado)  {
-
+const insertOuSelectEstado = async function (estado) {
     try {
-        let sql = `insert into tbl_estado(
-        sigla,
-        nome_estado
-    ) values(
-        '${estado.sigla}',
-        '${estado.nome_estado}'
-        );`
+        let sql = 'call procEstado(?, ?, ?, ?);'
 
-        let result = await knexConection.raw(sql)
+        let result = await knexConection.raw(sql, [
+            'SELECT_BY_SIGLA',
+            estado.sigla,
+            null,
+            null
+        ])
 
-        console.log(sql)
-        if(result)
-            return result[0].insertId
-        else
-            return false
-        
+        if (Array.isArray(result[0][0]) && result[0][0].length > 0) {
+            return result[0][0][0].id
+        } else {
+            result = await knexConection.raw(sql, [
+                'INSERT',
+                estado.sigla,
+                estado.nome_estado,
+                null
+            ])
+
+            if (result[0][0][0].id)
+                return result[0][0][0].id
+            else
+                return false
+        }
+
     } catch (error) {
-        
         return false
     }
 }
 
-/** 
-const updateEstado = async function (estado)  {
+const updateEstado = async function (estado) {
     try {
-        let sql = `update tbl_estado set
-                    sigla           = '${estado.sigla}',
-                    nome_estado     = '${estado.nome_estado}'
-                where id = ${estado.id}`
+        let sql = 'call procEstado(?, ?, ?, ?);'
 
-        let result = await knexConection.raw(sql)
+        let result = await knexConection.raw(sql, [
+            'UPDATE',
+            estado.sigla,
+            estado.nome_estado,
+            estado.id
+        ])
 
-        if(result)
+        if (result[0][0][0].affectedRows > 0)
             return true
         else
             return false
-        
+
     } catch (error) {
         return false
     }
 }
-*/
+
+const selectAllEstado = async function () {
+
+    try {
+        let sql = 'call procEstado(?, ?, ?, ?);'
+
+        let result = await knexConection.raw(sql, [
+            'SELECT_ALL',
+            null,
+            null,
+            null
+        ])
+
+        if (Array.isArray(result[0][0]))
+            return result[0][0]
+        else
+            return false
+
+    } catch (error) {
+        return false
+    }
+}
+
+const selectByIdEstado = async function (id) {
+    try {
+        let sql = 'call procEstado(?, ?, ?, ?);'
+
+        let result = await knexConection.raw(sql, [
+            'SELECT_BY_ID',
+            null,
+            null,
+            id
+        ])
+
+        if (Array.isArray(result[0][0]))
+            return result[0][0]
+        else
+            return false
+
+    } catch (error) {
+        return false
+    }
+}
 
 module.exports = {
-    insertEstado
-    //updateEstado
+    insertOuSelectEstado,
+    updateEstado,
+    selectAllEstado,
+    selectByIdEstado
 }

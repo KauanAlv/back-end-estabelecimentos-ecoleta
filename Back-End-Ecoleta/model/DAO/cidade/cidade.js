@@ -2,7 +2,7 @@
  * objetivo: arquivo responsavel por manipular os dados da cidade no banco de dados
  * data: 09/10/2026
  * autor: Gabriel Renato
- * versão: 1.0
+ * versão: 2.0
  **************************************************************************************/
 
 

@@ -26,46 +26,31 @@ const corsOptions = {
 //aplica as configurações do cors no app (EXPRESS)
 app.use(cors(corsOptions))
 
-//import das controller provisório
-const controllerEmail = require('./controller/email/conroller_email.js')
-const controllerTelefone = require('./controller/telefone/conroller_telefone')
-const controllerEstado = require('./controller/estado/controller_estado.js')
-const controllerCidade = require('./controller/cidade/controller_cidade.js')
-
-app.post('/cadastro/estabelecimento/Telefone', bodyparserJSON, async function(request, response){
-    let dados = request.body
-    let contenType = request.headers['content-type']
-    let result = await controllerCidade.inserirCidade(dados,contenType)
-
-    response.status (result.status_code)
-    response.json(result)
-})
-
-app.put('/cadastro/estabelecimento/:id', bodyparserJSON, async function(request, response){
-    let dados = request.body
-    let contenType = request.headers['content-type']
-    let result = await controllerTelefone.insertTelefone(dados,contenType)
-
-    response.status (result.status_code)
-    response.json(result)
-})
-
-app.get('/cadastro/estabelecimento/:id', bodyparserJSON, async function(request, response){
-    let id = request.params.id
-
-    let result = await controllerTelefone.buscarTelefone(id)
-
-    response.status (result.status_code)
-    response.json(result)
-})
 
 
-app.get('/cadastro/estabelecimento', bodyparserJSON, async function(request, response){
-    let result = await controllerCidade.listarCidade()
+const cidadeRouter = require('./routes/cidade.router.js')
+app.use('/cadastro/cidade/estabelecimento', cors(), cidadeRouter)
 
-    response.status (result.status_code)
-    response.json(result)
-})
+
+
+const emailRouter = require('./routes/email.router.js')
+app.use('/cadastro/email/estabelecimento', cors(), emailRouter)
+
+
+
+const telefoneRouter = require('./routes/telefone.router.js')
+app.use('/cadastro/telefone/estabelecimento', cors(), telefoneRouter)
+
+
+
+const estadoRouter = require('./routes/estado.router.js')
+app.use('/cadastro/estado/estabelecimento', cors(), estadoRouter)
+
+
+
+const enderecoRouter = require('./routes/endereco.router.js')
+app.use('/cadastro/endereco/estabelecimento', cors(), enderecoRouter)
+
 
 
 
