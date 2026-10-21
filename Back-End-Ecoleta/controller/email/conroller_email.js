@@ -5,27 +5,25 @@
  * versão: 2.0
  **************************************************************************************/
 
-const configmessages = require('../modulo/configMessages.js')
+const configMessages = require('../modulo/configMessages.js')
 const emailService = require('../../services/email/services_email.js')
 
 
-const inserirEmail = async function (email, contentType) {
-    let modifiedmessage = JSON.parse(JSON.stringify(configmessages))
+const inserirNovoEmail = async function (email, contentType) {
+    let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
-
-        if(String(contentType).toUpperCase() == 'APPLICATION/JSON') {
+        if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
             let result = await emailService.inserirEmailService(email)
 
             return result
-            
-    }else{
-        return modifiedmessage.ERROR_CONTENT_TYPE //415 content type
-    }
+        } else {
+            return customMessages.ERROR_CONTENT_TYPE // 415, não é um JSON
+        }
 
     } catch (error) {
-        return modifiedmessage.ERROR_INTERNAL_SERVER_CONTROLLER //500 controller
+        return customMessages.ERROR_INTERNAL_SERVER_CONTROLLER // 500, na controller
     }
 }
 
@@ -76,7 +74,7 @@ const buscarEmail = async function (id) {
 }
 
 module.exports = {
-    inserirEmail,
+    inserirNovoEmail,
     atualizarEmail,
     listarEmail,
     buscarEmail

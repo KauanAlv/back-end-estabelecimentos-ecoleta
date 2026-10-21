@@ -32,24 +32,23 @@ const cidadeRouter = require('./routes/cidade.router.js')
 app.use('/cadastro/cidade/estabelecimento', cors(), cidadeRouter)
 
 
-
 const emailRouter = require('./routes/email.router.js')
 app.use('/cadastro/email/estabelecimento', cors(), emailRouter)
 
 
 
 const telefoneRouter = require('./routes/telefone.router.js')
-app.use('/cadastro/telefone/estabelecimento', cors(), telefoneRouter)
+//app.use('/cadastro/telefone/estabelecimento', cors(), telefoneRouter)
 
 
 
 const estadoRouter = require('./routes/estado.router.js')
-app.use('/cadastro/estado/estabelecimento', cors(), estadoRouter)
+//app.use('/cadastro/estado/estabelecimento', cors(), estadoRouter)
 
 
 
 const enderecoRouter = require('./routes/endereco.router.js')
-app.use('/cadastro/endereco/estabelecimento', cors(), enderecoRouter)
+//app.use('/cadastro/endereco/estabelecimento', cors(), enderecoRouter)
 
 
 

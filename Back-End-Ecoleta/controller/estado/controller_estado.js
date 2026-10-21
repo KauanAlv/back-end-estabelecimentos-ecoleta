@@ -1,11 +1,11 @@
 /**************************************************************************************
- * objetivo: arquivo responsavel por manipular os dados de email no banco de dados
+ * objetivo: arquivo responsavel por manipular os dados de estado no banco de dados
  * data: 09/10/2026
  * autor: Gabriel Renato
  * versão: 1.0
  **************************************************************************************/
 
-const configmessages = require('../modulo/configMessages.js')
+const configMessages = require('../modulo/configMessages.js')
 // IMPORT DA SERVICE
 const estadoService = require('../../services/estado/services_estado.js')
 

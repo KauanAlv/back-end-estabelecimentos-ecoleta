@@ -15,4 +15,6 @@ const bodyparserJSON = bodyparser.json()
 //criando um objeto de rota para os andpoints de genero
 const router = express.Router()
 
-const controllerCidade = require('../controller/estado/controller_estado.js')
+const controllerEstado = require('../controller/estado/controller_estado.js')
+
+module.exports = router

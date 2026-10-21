@@ -6,7 +6,7 @@
  **************************************************************************************/
 
 
-const configmessages = require('../modulo/configMessages.js')
+const configMessages = require('../modulo/configMessages.js')
 
 // IMPORT DA SERVICE
 const telefoneService = require('../../services/telefone/services_telefone.js')

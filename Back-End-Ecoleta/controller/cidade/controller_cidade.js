@@ -1,5 +1,5 @@
 /**************************************************************************************
- * objetivo: arquivo responsavel por ser um molde da controller
+ * objetivo: arquivo responsavel por manipular os dados de cidade no banco de dados
  * data: 09/10/2026
  * autor: Gabriel Renato
  * versão: 1.0

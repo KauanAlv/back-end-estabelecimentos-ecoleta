@@ -15,22 +15,22 @@ const bodyparserJSON = bodyparser.json()
 //criando um objeto de rota para os andpoints de genero
 const router = express.Router()
 
-const controllerCidade = require('../controller/email/conroller_email.js')
-
+const controllerEmail = require('../controller/email/conroller_email.js')
 
 router.post('/', bodyparserJSON, async function(request, response){
     let dados = request.body
     let contenType = request.headers['content-type']
-    let result = await controllerCidade.inserirEmail(dados,contenType)
+    let result = await controllerEmail.inserirNovoEmail(dados, contenType)
 
     response.status (result.status_code)
     response.json(result)
 })
 
 router.get('/', bodyparserJSON, async function(request, response){
-    let result = await controllerCidade.listarEmail()
+    let result = await controllerEmail.listarEmail()
 
     response.status (result.status_code)
     response.json(result)
 })
 
+module.exports = router
