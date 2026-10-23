@@ -9,7 +9,7 @@
 const configMessages = require('../../modulo/configMessages.js')
 
 // IMPORT DA SERVICE
-const estabelecimentoService = require('../../../services/cadastro_empresa_coletora/empresa_coletora/services_empresa_coletora.js')
+const estabelecimentoService = require('../../../services/cadastro_estabelecimento/estabelecimento/services_estabelecimento.js')
 
 // Inserir um novo estabelecimento
 const inserirNovoEstabelecimento = async function (estabelecimento, contentType) {
