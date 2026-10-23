@@ -73,6 +73,6 @@ const estabelecimentoRouter = require('./routes/estabelecimento.router.js')
 app.use('/v1/ecoleta/estabelecimento', estabelecimentoRouter)
 
 // ================= START-API =================
-app.listen(1010, function () {
+app.listen(8000, function () {
     console.log('API aguardando novas requisições...')
 })
