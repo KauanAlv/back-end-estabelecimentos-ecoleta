@@ -5,20 +5,17 @@
  * versão: 2.0
  **************************************************************************************/
 
-
-//import da biblioteca para manipular dados no banco de dados mysql
-const knex = require('knex')
-
-//import do arquivo de configuracao para acesso ao banco de dados
-const knexdatabaseConfig = require('../../database_config/knexConfig.js')
-const knexConection = knex(knexdatabaseConfig.development)
+// Import da conexão global com o Banco de Dados MySQL
+const knexConection = require('../../../global_knex/global_knex.js')
 
 // Se houver um id relacionado aquele estado, retorna o id, se não, cadastra um novo
-const insertOuSelectCidade = async function (cidade) {
+const insertOuSelectCidade = async function (cidade, transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procCidade(?, ?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'SELECT_BY_NOME_ESTADO',
             cidade.nome_cidade,
             cidade.id_estado,
@@ -28,7 +25,7 @@ const insertOuSelectCidade = async function (cidade) {
         if (Array.isArray(result[0][0]) && result[0][0].length > 0) {
             return result[0][0][0].id
         } else {
-            result = await knexConection.raw(sql, [
+            result = await connection.raw(sql, [
                 'INSERT',
                 cidade.nome_cidade,
                 cidade.id_estado,
@@ -46,11 +43,13 @@ const insertOuSelectCidade = async function (cidade) {
     }
 }
 
-const updateCidade = async function (cidade) {
+const updateCidade = async function (cidade, transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procCidade(?, ?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'UPDATE',
             cidade.nome_cidade,
             cidade.id_estado,
@@ -67,11 +66,12 @@ const updateCidade = async function (cidade) {
     }
 }
 
-const selectAllCidade = async function () {
+const selectAllCidade = async function (transaction = null) {
     try {
+        let connection = transaction || knexConection
         let sql = 'call procCidade(?, ?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'SELECT_ALL',
             null,
             null,
@@ -88,11 +88,13 @@ const selectAllCidade = async function () {
     }
 }
 
-const selectByIdCidade = async function (id) {
+const selectByIdCidade = async function (id, transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procCidade(?, ?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'SELECT_BY_ID',
             null,
             null,

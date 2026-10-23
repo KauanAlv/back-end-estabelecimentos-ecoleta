@@ -5,19 +5,16 @@
  * versão: 2.0
  **************************************************************************************/
 
+// Import da conexão global com o Banco de Dados MySQL
+const knexConection = require('../../../global_knex/global_knex.js')
 
-//import da biblioteca para manipular dados no banco de dados mysql
-const knex = require('knex')
-
-//import do arquivo de configuracao para acesso ao banco de dados
-const knexdatabaseConfig = require('../../database_config/knexConfig.js')
-const knexConection = knex(knexdatabaseConfig.development)
-
-const insertEndereco = async function (endereco) {
+const insertEndereco = async function (endereco, transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procEndereco(?, ?, ?, ?, ?, ?, ?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'INSERT',
             endereco.cep,
             endereco.logradouro,
@@ -39,11 +36,13 @@ const insertEndereco = async function (endereco) {
     }
 }
 
-const updateEndereco = async function (endereco) {
+const updateEndereco = async function (endereco, transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procEndereco(?, ?, ?, ?, ?, ?, ?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'UPDATE',
             endereco.cep,
             endereco.logradouro,
@@ -65,11 +64,13 @@ const updateEndereco = async function (endereco) {
     }
 }
 
-const selectAllEndereco = async function () {
+const selectAllEndereco = async function (transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procEndereco(?, ?, ?, ?, ?, ?, ?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'SELECT_ALL',
             null,
             null,
@@ -91,11 +92,13 @@ const selectAllEndereco = async function () {
     }
 }
 
-const selectByIdEndereco = async function (id) {
+const selectByIdEndereco = async function (id, transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procEndereco(?, ?, ?, ?, ?, ?, ?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'SELECT_BY_ID',
             null,
             null,

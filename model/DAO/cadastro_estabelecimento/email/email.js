@@ -5,19 +5,16 @@
  * versão: 2.0
  **************************************************************************************/
 
+// Import da conexão global com o Banco de Dados MySQL
+const knexConection = require('../../../global_knex/global_knex.js')
 
-//import da biblioteca para manipular dados no banco de dados mysql
-const knex = require('knex')
-
-//import do arquivo de configuracao para acesso ao banco de dados
-const knexdatabaseConfig = require('../../database_config/knexConfig.js')
-const knexConection = knex(knexdatabaseConfig.development)
-
-const insertEmail = async function (email) {
+const insertEmail = async function (email, transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procEmail(?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'INSERT',
             email.email,
             null
@@ -33,11 +30,13 @@ const insertEmail = async function (email) {
     }
 }
 
-const updateEmail = async function (email) {
+const updateEmail = async function (email, transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procEmail(?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'UPDATE',
             email.email,
             email.id
@@ -53,12 +52,13 @@ const updateEmail = async function (email) {
     }
 }
 
-const selectAllEmail = async function () {
-
+const selectAllEmail = async function (transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procEmail(?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'SELECT_ALL',
             null,
             null
@@ -74,11 +74,13 @@ const selectAllEmail = async function () {
     }
 }
 
-const selectByIdEmail = async function (id) {
+const selectByIdEmail = async function (id, transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procEmail(?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'SELECT_BY_ID',
             null,
             id

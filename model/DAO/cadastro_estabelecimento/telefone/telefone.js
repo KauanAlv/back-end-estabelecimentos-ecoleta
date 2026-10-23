@@ -5,19 +5,16 @@
  * versão: 2.0
  **************************************************************************************/
 
+// Import da conexão global com o Banco de Dados MySQL
+const knexConection = require('../../../global_knex/global_knex.js')
 
-//import da biblioteca para manipular dados no banco de dados mysql
-const knex = require('knex')
-
-//import do arquivo de configuracao para acesso ao banco de dados
-const knexdatabaseConfig = require('../../database_config/knexConfig.js')
-const knexConection = knex(knexdatabaseConfig.development)
-
-const insertTelefone = async function (numero) {
+const insertTelefone = async function (numero, transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procTelefone(?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'INSERT',
             numero.numero,
             null
@@ -33,11 +30,13 @@ const insertTelefone = async function (numero) {
     }
 }
 
-const updateTelefone = async function (numero) {
+const updateTelefone = async function (numero, transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procTelefone(?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'UPDATE',
             numero.numero,
             numero.id
@@ -53,12 +52,13 @@ const updateTelefone = async function (numero) {
     }
 }
 
-const selectAllTelefone = async function () {
-
+const selectAllTelefone = async function (transaction = null) {
     try {
+        let connection = transaction || knexConection
+    
         let sql = 'call procTelefone(?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'SELECT_ALL',
             null,
             null
@@ -74,11 +74,13 @@ const selectAllTelefone = async function () {
     }
 }
 
-const selectByIdTelefone = async function (id) {
+const selectByIdTelefone = async function (id, transaction = null) {
     try {
+        let connection = transaction || knexConection
+
         let sql = 'call procTelefone(?, ?, ?);'
 
-        let result = await knexConection.raw(sql, [
+        let result = await connection.raw(sql, [
             'SELECT_BY_ID',
             null,
             id
