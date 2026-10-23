@@ -5,54 +5,74 @@
  * versão: 1.0
  **************************************************************************************/
 
+//Import no .env
 require('dotenv').config()
 
-const express   = require ('express')
-const cors      = require ('cors')
-const bodyparser = require('body-parser')
+//Import das dependências para criar a API
+const express = require('express')
+const cors = require('cors')
 
-//permitindo a utilização do body das requisições
-const bodyparserJSON = bodyparser.json()
+//Import do middleware de autenticação
+const auth = require('./middleware/auth.js')
 
+//Criando um objeto do express para criar a API
 const app = express()
 
+//Configurações no cors da API
 const corsOptions = {
-    origin:['*'],    //configuração de origin da requisição (IP ou dominio)
-    methods: 'GET, POST, PUT, DELETE, OPTION',  //configuração dos verbos q serão utilizados na API
-    allowedHeaders: ['Content-type', 'Authorization'] //configurações de permissões
-                     //tipo de dados   //autorização de acesso
+    origin: '*',   //Configuração de origem da requisição (IP ou Dominío)
+    methods: 'GET, POST, PUT, DELETE, OPTIONS', //Configuração dos verbos que serão ultilizados na API
+    allowedHeaders: ['Content-type', 'Authorization'], //Configurações de permissões
+    //                    └── Tipo de dados    └── Autorização de acesso
 }
 
-//aplica as configurações do cors no app (EXPRESS)
+//Aplica as configurações do CORS no app (EXPRESS)
 app.use(cors(corsOptions))
 
+// =================
+//     ENDPOINTS 
+// =================
+
+// ================= CADASTRO ESTABELECIMENTO =================
+const cadastroEstabelecimento = require('./routes/cadastro_estabelecimento.js')
+app.use('/v1/ecoleta/cadastro/estabelecimento', cadastroEstabelecimento)
+
+// ================= LOGIN ESTABELECIMENTO =================
+const loginEstabelecimento = require('./routes/login_estabelecimento.js')
+app.use('/v1/ecoleta/login/estabelecimento', loginEstabelecimento)
+
+// ================= HOME ESTABELECIMENTO =================
+const homeEstabelecimento = require('./routes/home_estabelecimento.js')
+app.use('/v1/ecoleta/estabelecimento/home', homeEstabelecimento)
 
 
-const cidadeRouter = require('./routes/cidade.router.js')
-app.use('/cadastro/cidade/estabelecimento', cors(), cidadeRouter)
 
 
+// ================= EMAIL =================
 const emailRouter = require('./routes/email.router.js')
-app.use('/cadastro/email/estabelecimento', cors(), emailRouter)
+app.use('/v1/ecoleta/email', emailRouter)
 
-
-
+// ================= TELEFONE =================
 const telefoneRouter = require('./routes/telefone.router.js')
-//app.use('/cadastro/telefone/estabelecimento', cors(), telefoneRouter)
+app.use('/v1/ecoleta/telefone', telefoneRouter)
 
-
-
+// ================= ESTADO =================
 const estadoRouter = require('./routes/estado.router.js')
-//app.use('/cadastro/estado/estabelecimento', cors(), estadoRouter)
+app.use('/v1/ecoleta/estado', estadoRouter)
 
+// ================= CIDADE =================
+const cidadeRouter = require('./routes/cidade.router.js')
+app.use('/v1/ecoleta/cidade', cidadeRouter)
 
-
+// ================= ENDERECO =================
 const enderecoRouter = require('./routes/endereco.router.js')
-//app.use('/cadastro/endereco/estabelecimento', cors(), enderecoRouter)
+app.use('/v1/ecoleta/endereco', enderecoRouter)
 
+// ================= ESTABELECIMENTO =================
+const estabelecimentoRouter = require('./routes/estabelecimento.router.js')
+app.use('/v1/ecoleta/estabelecimento', estabelecimentoRouter)
 
-
-
-app.listen(1010, function(){
-    console.log('API aguardadndo novas requisições ...')
+// ================= START-API =================
+app.listen(1010, function () {
+    console.log('API aguardando novas requisições...')
 })
