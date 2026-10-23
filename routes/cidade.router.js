@@ -1,35 +1,59 @@
-/**************************************************************************************
- * objetivo: arquivo responsavel por ser a API
- * data: 20/10/2026 - (terça-feira)
- * autor: Gabriel Renato
- * versão: 1.0
- **************************************************************************************/
+/****************************************************************
+ * Objetivo: Arquivo responsável por conter os métodos das rotas
+ * Data: 23/10/2026 - (sexta-feira)
+ * Autor: Kauan Alves Pereira
+ * Versão: 1.0
+****************************************************************/
 
+const express = require('express')        //Import do express
+const bodyParser = require('body-parser') //Import do bodyParser
 
-const express = require('express')
-const bodyparser = require('body-parser')
+const bodyParserJSON = bodyParser.json()  //Permitindo a utilização do JSON no body das requisições
 
-//permitindo a utilização do JSON no body das requisições
-const bodyparserJSON = bodyparser.json()
+const router = express.Router()           //Cria um objeto de rota para os Endpoints
 
-//criando um objeto de rota para os andpoints de genero
-const router = express.Router()
+const controllerCidade = require('../controller/cadastro_estabelecimento/cidade/controller_cidade.js')
 
-const controllerCidade = require('../controller/cidade/controller_cidade.js')
+// ================= ENDPOINTS ====================
+router.post('/', bodyParserJSON, async function (request, response) {
 
-router.post('/', bodyparserJSON, async function(request, response){
     let dados = request.body
-    let contenType = request.headers['content-type']
-    let result = await controllerCidade.inserirNovaCidade(dados,contenType)
 
-    response.status (result.status_code)
+    let contentType = request.headers['content-type']
+
+    let result = await controllerCidade.inserirNovaCidade(dados, contentType)
+
+    response.status(result.status_code)
     response.json(result)
 })
 
-router.get('/', bodyparserJSON, async function(request, response){
+router.get('/', async function (request, response) {
+
     let result = await controllerCidade.listarCidade()
 
-    response.status (result.status_code)
+    response.status(result.status_code)
+    response.json(result)
+})
+
+router.get('/:id', async function (request, response) {
+
+    let id = request.params.id
+    let result = await controllerCidade.buscarCidade(id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+router.put('/:id', bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    let id = request.params.id
+
+    let dados = request.body
+
+    let result = await controllerCidade.atualizarCidade(dados, id, contentType)
+    response.status(result.status_code)
     response.json(result)
 })
 

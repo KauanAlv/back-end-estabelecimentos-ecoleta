@@ -1,35 +1,59 @@
-/**************************************************************************************
- * objetivo: arquivo responsavel por ser a API
- * data: 20/10/2026 - (terça-feira)
- * autor: Gabriel Renato
- * versão: 1.0
- **************************************************************************************/
+/****************************************************************
+ * Objetivo: Arquivo responsável por conter os métodos das rotas
+ * Data: 23/10/2026 - (sexta-feira)
+ * Autor: Kauan Alves Pereira
+ * Versão: 1.0
+****************************************************************/
 
+const express = require('express')        //Import do express
+const bodyParser = require('body-parser') //Import do bodyParser
 
-const express = require('express')
-const bodyparser = require('body-parser')
+const bodyParserJSON = bodyParser.json()  //Permitindo a utilização do JSON no body das requisições
 
-//permitindo a utilização do JSON no body das requisições
-const bodyparserJSON = bodyparser.json()
+const router = express.Router()           //Cria um objeto de rota para os Endpoints
 
-//criando um objeto de rota para os andpoints de genero
-const router = express.Router()
+const controllerEmail = require('../controller/cadastro_estabelecimento/email/controller_email.js')
 
-const controllerEmail = require('../controller/email/conroller_email.js')
+// ================= ENDPOINTS ====================
+router.post('/', bodyParserJSON, async function (request, response) {
 
-router.post('/', bodyparserJSON, async function(request, response){
     let dados = request.body
-    let contenType = request.headers['content-type']
-    let result = await controllerEmail.inserirNovoEmail(dados, contenType)
 
-    response.status (result.status_code)
+    let contentType = request.headers['content-type']
+
+    let result = await controllerEmail.inserirNovoEmail(dados, contentType)
+
+    response.status(result.status_code)
     response.json(result)
 })
 
-router.get('/', bodyparserJSON, async function(request, response){
+router.get('/', async function (request, response) {
+
     let result = await controllerEmail.listarEmail()
 
-    response.status (result.status_code)
+    response.status(result.status_code)
+    response.json(result)
+})
+
+router.get('/:id', async function (request, response) {
+
+    let id = request.params.id
+    let result = await controllerEmail.buscarEmail(id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+router.put('/:id', bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    let id = request.params.id
+
+    let dados = request.body
+
+    let result = await controllerEmail.atualizarEmail(dados, id, contentType)
+    response.status(result.status_code)
     response.json(result)
 })
 
