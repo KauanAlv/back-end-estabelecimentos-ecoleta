@@ -5,7 +5,6 @@
  * Versão: 1.0
 *****************************************************************/
 
-
 const Joi = require('joi')
 
 const enderecoSchema = Joi.object({
@@ -64,6 +63,17 @@ const enderecoSchema = Joi.object({
             'string.max': 'O Nome da Cidade deve possuir no máximo 60 caracteres.',
             'any.required': 'O campo Nome da Cidade é obrigatório.',
             'string.base': 'O Nome da Cidade deve ser um texto.'
+        }),
+
+        nome_estado: Joi.string()
+        .trim()
+        .max(30)
+        .required()
+        .messages({
+            'string.empty': 'O campo Nome do Estado não pode ficar vazio.',
+            'string.max': 'O Nome do Estado deve possuir no máximo 30 caracteres.',
+            'any.required': 'O campo Nome do Estado é obrigatório.',
+            'string.base': 'O Nome do Estado deve ser um texto.'
         }),
 
     sigla_estado: Joi.string()
