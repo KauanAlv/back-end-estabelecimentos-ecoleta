@@ -14,36 +14,43 @@ const buscarCoordenadasEndereco = async function (endereco) {
     try {
 
         // URL DA API DE GEOCODIFICAÇÃO
-        let url = 'https://api.heigit.org/pelias/v1/search'
+        let url = 'https://nominatim.openstreetmap.org/search'
 
         // MONTA O ENDEREÇO PARA CONSULTA
-        let textoEndereco =
-            endereco.logradouro + ', ' +
-            endereco.numero + ', ' +
-            endereco.nome_cidade + ', ' +
-            endereco.sigla_estado
+        let numero = String(endereco.numero)
+        let logradouro = endereco.logradouro
+        let cidade = endereco.nome_cidade
+        let estado = endereco.nome_estado
+        let cep = String(endereco.cep).replace(/\D/g, '')
 
         // CONSULTA A API DE GEOCODIFICAÇÃO
         let resposta = await axios.get(
             url,
             {
                 params: {
-                    text: textoEndereco,
-                    size: 5
+                    street: numero + '/' + logradouro,
+                    city: cidade,
+                    state: estado,
+                    country: 'Brasil',
+                    postalcode: cep,
+                    format: 'jsonv2',
+                    addressdetails: 1,
+                    limit: 5,
+                    countrycodes: 'br'
                 },
                 headers: {
-                    'Authorization': process.env.GEOLC_API_KEY,
-                    'Accept-Language': 'pt'
+                    'User-Agent': 'Ecoleta-TCC/1.0 (contato: kauan0alvess@gmail.com)',
+                    'Accept-Language': 'pt-BR'
                 },
                 timeout: 10000
             }
         )
 
         // OBTÉM OS RESULTADOS DA CONSULTA
-        let features = resposta.data.features
+        let resultados = resposta.data
 
         // VERIFICA SE A API RETORNOU RESULTADOS
-        if (!Array.isArray(features) || features.length === 0) {
+        if (!Array.isArray(resultados) || resultados.length === 0) {
 
             console.log('Nenhum resultado encontrado para o endereço.')
 
@@ -53,53 +60,48 @@ const buscarCoordenadasEndereco = async function (endereco) {
             }
         }
 
+        // NORMALIZA OS TEXTOS PARA COMPARAÇÃO
+        const normalizarTexto = function (texto) {
+            return String(texto || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .trim()
+                .toLowerCase()
+        }
+
         // NORMALIZA OS DADOS ESPERADOS
-        let cidadeEsperada = endereco.nome_cidade.trim().toLowerCase()
-        let estadoEsperado = endereco.sigla_estado.trim().toLowerCase()
+        let logradouroEsperado = normalizarTexto(logradouro)
+        let cidadeEsperada = normalizarTexto(cidade)
+        let estadoEsperado = normalizarTexto(estado)
+
+
+        // PROCURA UM RESULTADO COMPATÍVEL COM O ENDEREÇO
 
         // PROCURA O RESULTADO QUE MELHOR CORRESPONDE À CIDADE E AO ESTADO
-        let resultadoEndereco = features.find(function (feature) {
+        let resultadoEndereco = resultados.find(function (resultado) {
 
-            if (
-                !feature.properties ||
-                !feature.geometry ||
-                feature.geometry.type !== 'Point' ||
-                !Array.isArray(feature.geometry.coordinates) ||
-                feature.geometry.coordinates.length < 2
-            ) {
+            if (!resultado.address) {
                 return false
             }
 
-            let propriedades = feature.properties
+            let enderecoRetornado = resultado.address
+            let logradouroEncontrado = normalizarTexto(enderecoRetornado.road || enderecoRetornado.pedestrian || enderecoRetornado.residential || '')
+            let cidadeEncontrada = normalizarTexto(enderecoRetornado.city || enderecoRetornado.town || enderecoRetornado.municipality || '')
+            let estadoEncontrado = normalizarTexto(enderecoRetornado.state || '')
 
-            let cidadeEncontrada = (
-                propriedades.locality ||
-                propriedades.localadmin ||
-                ''
-            ).trim().toLowerCase()
-
-            let estadoEncontrado = (
-                propriedades.region_a ||
-                ''
-            ).trim().toLowerCase()
-
-            // CONFERE A CIDADE E O ESTADO QUANDO INFORMADOS PELA API
-            return cidadeEncontrada === cidadeEsperada &&
+            // VERIFICA SE O LOGRADOURO, A CIDADE E O ESTADO CORRESPONDEM
+            return (
+                logradouroEncontrado === logradouroEsperado &&
+                cidadeEncontrada === cidadeEsperada &&
                 estadoEncontrado === estadoEsperado
+            )
         })
 
-        // VERIFICA SE FOI ENCONTRADO UM RESULTADO COMPATÍVEL
+        // VERIFICA SE FOI ENCONTRADO UM ENDEREÇO COMPATÍVEL
         if (!resultadoEndereco) {
 
             console.log(
-                'Nenhum resultado corresponde à cidade e ao estado informados.'
-            )
-
-            console.log(
-                'Primeiro resultado retornado:',
-                features[0].properties
-                    ? features[0].properties.label
-                    : 'Sem informações de endereço'
+                'Nenhum resultado corresponde ao logradouro, cidade e estado informados.'
             )
 
             return {
@@ -108,48 +110,12 @@ const buscarCoordenadasEndereco = async function (endereco) {
             }
         }
 
-        // OBTÉM AS PROPRIEDADES DO RESULTADO
-        let propriedades = resultadoEndereco.properties
-
-        // EXIBE INFORMAÇÕES PARA AVALIAR A CORRESPONDÊNCIA
-        console.log('Endereço pesquisado:', textoEndereco)
-
-        console.log('Endereço retornado:', propriedades.label)
-
-        console.log('Cidade retornada:', propriedades.locality)
-
-        console.log('Estado retornado:', propriedades.region_a)
-
-        console.log('Tipo de resultado:', propriedades.layer)
-
-        console.log('Precisão:', propriedades.accuracy)
-
-        console.log('Correspondência:', propriedades.match_type)
-
-        console.log('Confiança:', propriedades.confidence)
-
-        // AVISA QUANDO A API RETORNA UMA LOCALIZAÇÃO APROXIMADA
-        if (
-            propriedades.accuracy === 'centroid' ||
-            propriedades.match_type === 'fallback'
-        ) {
-            console.log(
-                'Aviso: a API retornou uma localização aproximada, ' +
-                'que pode representar o centro da rua.'
-            )
-        }
-
         // OBTÉM AS COORDENADAS RETORNADAS PELA API
-        let coordenadas = resultadoEndereco.geometry.coordinates
-
-        // A API RETORNA LONGITUDE PRIMEIRO E LATITUDE DEPOIS
-        let longitude = coordenadas[0]
-        let latitude = coordenadas[1]
+        let latitude = Number(resultadoEndereco.lat)
+        let longitude = Number(resultadoEndereco.lon)
 
         // VALIDA AS COORDENADAS
         if (
-            typeof latitude !== 'number' ||
-            typeof longitude !== 'number' ||
             !Number.isFinite(latitude) ||
             !Number.isFinite(longitude) ||
             latitude < -90 ||
@@ -166,7 +132,31 @@ const buscarCoordenadasEndereco = async function (endereco) {
             }
         }
 
-        // EXIBE AS COORDENADAS ENCONTRADAS
+        // VERIFICA SE O NÚMERO DO IMÓVEL FOI IDENTIFICADO
+        let numeroEncontrado = resultadoEndereco.address.house_number
+
+        if (!numeroEncontrado || String(numeroEncontrado).trim() !== numero) {
+            console.log(
+                'Aviso: o Nominatim encontrou o logradouro, ' +
+                'mas não confirmou o número do imóvel.'
+            )
+        }
+
+        // VERIFICA SE O CEP RETORNADO CORRESPONDE AO INFORMADO
+        let cepEncontrado = resultadoEndereco.address.postcode
+
+        if (cepEncontrado && String(cepEncontrado).replace(/\D/g, '') !== cep) {
+            console.log(
+                'Aviso: o CEP retornado pela API é diferente do informado.'
+            )
+
+            console.log('CEP informado:', cep)
+            console.log('CEP retornado:', cepEncontrado)
+        }
+
+        // EXIBE AS INFORMAÇÕES DO ENDEREÇO ENCONTRADO
+        console.log('Endereço retornado pela API:', resultadoEndereco.display_name)
+        console.log('Tipo de resultado:', resultadoEndereco.type)
         console.log('Latitude:', latitude)
         console.log('Longitude:', longitude)
 
