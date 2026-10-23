@@ -12,7 +12,7 @@ const bodyParserJSON = bodyParser.json()  //Permitindo a utilização do JSON no
 
 const router = express.Router()           //Cria um objeto de rota para os Endpoints
 
-const controllerEndereco = require('../controller/cadastro_empresa_coletora/endereco/controller_endereco.js')
+const controllerEndereco = require('../controller/cadastro_estabelecimento/endereco/controller_endereco.js')
 
 // ================= ENDPOINTS ====================
 router.post('/', bodyParserJSON, async function (request, response) {
