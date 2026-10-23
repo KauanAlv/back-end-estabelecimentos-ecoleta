@@ -1,51 +1,47 @@
-/******************************************************************************************
- * Objetivo: Arquivo responsável por executar as regras de negócio relacionadas ao ESTADO
+/*********************************************************************************************************
+ * Objetivo: Arquivo responsável por executar as regras de negócio relacionadas ao EMAIL
  * Data: 20/10/2026 - (terça-feira)
  * Autor: Gabriel Renato
  * Versão: 1.0
-*******************************************************************************************/
+*********************************************************************************************************/
 
 // IMPORT DO ARQUIVO DE CONFIGURAÇÕES DE MENSAGENS DO PROJETO
-const configMessages = require('../../controller/modulo/configMessages.js')
+const configMessages = require('../../../controller/modulo/configMessages.js')
 
 // IMPORT DA DAO
-const estadoDAO = require('../../model/DAO/estado/estado.js')
+const emailDAO = require('../../../model/DAO/cadastro_estabelecimento/email/email.js')
 
 // IMPORT DO SCHEMA DE VALIDAÇÃO
-const estadoSchema = require('../../schema/estado/schema_estado.js')
-const validarDados = require('../../utils/validarDados.js')
+const emailSchema = require('../../../schema/email/schema_email.js')
+const validarDados = require('../../../utils/validarDados.js')
 
-// Função para validar os dados do estado
-const validarDadosEstado = function (estado) {
+// Função para validar os dados do e-mail
+const validarDadosEmail = function (email) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
-    return validarDados.validarDadosGeral(estadoSchema, estado, customMessages)
+    return validarDados.validarDadosGeral(emailSchema, email, customMessages)
 }
 
-// Função para inserir um novo estado
-const inserirEstadoService = async function (estado) {
+// Função para inserir um novo e-mail
+const inserirEmailService = async function (email) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        let validacao = validarDadosEstado(estado)
+        let validacao = validarDadosEmail(email)
 
         if (validacao) {
             return validacao
         }
 
-        if (estado && estado.sigla) {
-            estado.sigla = estado.sigla.toUpperCase().trim()
-        }
-
-        let result = await estadoDAO.insertOuSelectEstado(estado)
+        let result = await emailDAO.insertEmail(email)
 
         if (result) {
-            estado.id = result
+            email.id = result
 
             customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_CREATED_ITEM.status
             customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_CREATED_ITEM.status_code
             customMessages.DEFAULT_MESSAGE.message = customMessages.SUCCESS_CREATED_ITEM.message
-            customMessages.DEFAULT_MESSAGE.response = estado
+            customMessages.DEFAULT_MESSAGE.response = email
 
             return customMessages.DEFAULT_MESSAGE // 201, item criado
         } else {
@@ -57,31 +53,26 @@ const inserirEstadoService = async function (estado) {
     }
 }
 
-// Função para atualizar um estado
-const atualizarEstadoService = async function (estado, id) {
+// Função para atualizar um e-mail
+const atualizarEmailService = async function (email, id) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        let resultBuscarEstado = await buscarEstadoService(id)
+        let resultBuscarEmail = await buscarEmailService(id)
 
-        if (resultBuscarEstado.status) {
-            let validacao = validarDadosEstado(estado)
+        if (resultBuscarEmail.status) {
+            let validacao = validarDadosEmail(email)
 
             if (!validacao) {
+                email.id = Number(id)
 
-                if (estado && estado.sigla) {
-                    estado.sigla = estado.sigla.toUpperCase().trim()
-                }
-
-                estado.id = Number(id)
-
-                let result = await estadoDAO.updateEstado(estado)
+                let result = await emailDAO.updateEmail(email)
 
                 if (result) {
                     customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_UPDATED_ITEM.status
                     customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_UPDATED_ITEM.status_code
                     customMessages.DEFAULT_MESSAGE.message = customMessages.SUCCESS_UPDATED_ITEM.message
-                    customMessages.DEFAULT_MESSAGE.response = estado
+                    customMessages.DEFAULT_MESSAGE.response = email
 
                     return customMessages.DEFAULT_MESSAGE // 200 (atualizado)
                 } else {
@@ -91,7 +82,7 @@ const atualizarEstadoService = async function (estado, id) {
                 return validacao
             }
         } else {
-            return resultBuscarEstado // 400, 404 ou 500 da services/model
+            return resultBuscarEmail // 400, 404 ou 500 da services/model
         }
 
     } catch (error) {
@@ -99,12 +90,12 @@ const atualizarEstadoService = async function (estado, id) {
     }
 }
 
-// Função para listar um estado
-const listarEstadoService = async function () {
+// Função para listar um e-mail
+const listarEmailService = async function () {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        let result = await estadoDAO.selectAllEstado()
+        let result = await emailDAO.selectAllEmail()
 
         if (result) {
 
@@ -112,7 +103,7 @@ const listarEstadoService = async function () {
                 customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_CREATED_ITEM.status
                 customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_CREATED_ITEM.status_code
                 customMessages.DEFAULT_MESSAGE.response.count = result.length
-                customMessages.DEFAULT_MESSAGE.response.estado = result
+                customMessages.DEFAULT_MESSAGE.response.email = result
 
                 return customMessages.DEFAULT_MESSAGE // 200
             } else {
@@ -128,8 +119,8 @@ const listarEstadoService = async function () {
     }
 }
 
-// Função para buscar um estado
-const buscarEstadoService = async function (id) {
+// Função para buscar um e-mail
+const buscarEmailService = async function (id) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
@@ -139,13 +130,13 @@ const buscarEstadoService = async function (id) {
             return validacaoId
         }
 
-        let result = await estadoDAO.selectByIdEstado(id)
+        let result = await emailDAO.selectByIdEmail(id)
 
         if (result) {
             if (result.length > 0) {
                 customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_RESPONSE.status
                 customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_RESPONSE.status_code
-                customMessages.DEFAULT_MESSAGE.response.estado = result
+                customMessages.DEFAULT_MESSAGE.response.email = result
 
                 return customMessages.DEFAULT_MESSAGE
             } else {
@@ -161,8 +152,8 @@ const buscarEstadoService = async function (id) {
 }
 
 module.exports = {
-    inserirEstadoService,
-    atualizarEstadoService,
-    listarEstadoService,
-    buscarEstadoService
+    inserirEmailService,
+    atualizarEmailService,
+    listarEmailService,
+    buscarEmailService
 }

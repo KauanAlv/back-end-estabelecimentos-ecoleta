@@ -1,48 +1,47 @@
-/*********************************************************************************************************
- * Objetivo: Arquivo responsável por executar as regras de negócio relacionadas ao EMAIL
+/******************************************************************************************
+ * Objetivo: Arquivo responsável por executar as regras de negócio relacionadas a CIDADE
  * Data: 20/10/2026 - (terça-feira)
  * Autor: Gabriel Renato
  * Versão: 1.0
- *********************************************************************************************************/
-
+*******************************************************************************************/
 
 // IMPORT DO ARQUIVO DE CONFIGURAÇÕES DE MENSAGENS DO PROJETO
-const configMessages = require('../../controller/modulo/configMessages.js')
+const configMessages = require('../../../controller/modulo/configMessages.js')
 
 // IMPORT DA DAO
-const emailDAO = require('../../model/DAO/email/email.js')
+const cidadeDAO = require('../../../model/DAO/cadastro_estabelecimento/cidade/cidade.js')
 
 // IMPORT DO SCHEMA DE VALIDAÇÃO
-const emailSchema = require('../../schema/email/schema_email.js')
-const validarDados = require('../../utils/validarDados.js')
+const cidadeSchema = require('../../../schema/cidade/schema_cidade.js')
+const validarDados = require('../../../utils/validarDados.js')
 
-// Função para validar os dados do e-mail
-const validarDadosEmail = function (email) {
+// Função para validar os dados da cidade
+const validarDadosCidade = function (cidade) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
-    return validarDados.validarDadosGeral(emailSchema, email, customMessages)
+    return validarDados.validarDadosGeral(cidadeSchema, cidade, customMessages)
 }
 
-// Função para inserir um novo e-mail
-const inserirEmailService = async function (email) {
+// Função para inserir uma nova cidade
+const inserirCidadeService = async function (cidade) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        let validacao = validarDadosEmail(email)
+        let validacao = validarDadosCidade(cidade)
 
         if (validacao) {
             return validacao
         }
 
-        let result = await emailDAO.insertEmail(email)
+        let result = await cidadeDAO.insertOuSelectCidade(cidade)
 
         if (result) {
-            email.id = result
+            cidade.id = result
 
             customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_CREATED_ITEM.status
             customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_CREATED_ITEM.status_code
             customMessages.DEFAULT_MESSAGE.message = customMessages.SUCCESS_CREATED_ITEM.message
-            customMessages.DEFAULT_MESSAGE.response = email
+            customMessages.DEFAULT_MESSAGE.response = cidade
 
             return customMessages.DEFAULT_MESSAGE // 201, item criado
         } else {
@@ -54,26 +53,27 @@ const inserirEmailService = async function (email) {
     }
 }
 
-// Função para atualizar um e-mail
-const atualizarEmailService = async function (email, id) {
+// Função para atualizar uma cidade
+const atualizarCidadeService = async function (cidade, id) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        let resultBuscarEmail = await buscarEmailService(id)
+        let resultBuscarCidade = await buscarCidadeService(id)
 
-        if (resultBuscarEmail.status) {
-            let validacao = validarDadosEmail(email)
+        if (resultBuscarCidade.status) {
+            let validacao = validarDadosCidade(cidade)
 
             if (!validacao) {
-                email.id = Number(id)
 
-                let result = await emailDAO.updateEmail(email)
+                cidade.id = Number(id)
+
+                let result = await cidadeDAO.updateCidade(cidade)
 
                 if (result) {
                     customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_UPDATED_ITEM.status
                     customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_UPDATED_ITEM.status_code
                     customMessages.DEFAULT_MESSAGE.message = customMessages.SUCCESS_UPDATED_ITEM.message
-                    customMessages.DEFAULT_MESSAGE.response = email
+                    customMessages.DEFAULT_MESSAGE.response = cidade
 
                     return customMessages.DEFAULT_MESSAGE // 200 (atualizado)
                 } else {
@@ -83,7 +83,7 @@ const atualizarEmailService = async function (email, id) {
                 return validacao
             }
         } else {
-            return resultBuscarEmail // 400, 404 ou 500 da services/model
+            return resultBuscarCidade // 400, 404 ou 500 da services/model
         }
 
     } catch (error) {
@@ -91,12 +91,12 @@ const atualizarEmailService = async function (email, id) {
     }
 }
 
-// Função para listar um e-mail
-const listarEmailService = async function () {
+// Função para listar as cidades
+const listarCidadeService = async function () {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        let result = await emailDAO.selectAllEmail()
+        let result = await cidadeDAO.selectAllCidade()
 
         if (result) {
 
@@ -104,7 +104,7 @@ const listarEmailService = async function () {
                 customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_CREATED_ITEM.status
                 customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_CREATED_ITEM.status_code
                 customMessages.DEFAULT_MESSAGE.response.count = result.length
-                customMessages.DEFAULT_MESSAGE.response.email = result
+                customMessages.DEFAULT_MESSAGE.response.cidade = result
 
                 return customMessages.DEFAULT_MESSAGE // 200
             } else {
@@ -116,12 +116,13 @@ const listarEmailService = async function () {
         }
 
     } catch (error) {
+        console.log(error)
         return customMessages.ERROR_INTERNAL_SERVER_SERVICES // 500, na services
     }
 }
 
-// Função para buscar um e-mail
-const buscarEmailService = async function (id) {
+// Função para buscar uma cidade
+const buscarCidadeService = async function (id) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
@@ -131,13 +132,13 @@ const buscarEmailService = async function (id) {
             return validacaoId
         }
 
-        let result = await emailDAO.selectByIdEmail(id)
+        let result = await cidadeDAO.selectByIdCidade(id)
 
         if (result) {
             if (result.length > 0) {
                 customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_RESPONSE.status
                 customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_RESPONSE.status_code
-                customMessages.DEFAULT_MESSAGE.response.email = result
+                customMessages.DEFAULT_MESSAGE.response.cidade = result
 
                 return customMessages.DEFAULT_MESSAGE
             } else {
@@ -153,8 +154,8 @@ const buscarEmailService = async function (id) {
 }
 
 module.exports = {
-    inserirEmailService,
-    atualizarEmailService,
-    listarEmailService,
-    buscarEmailService
+    inserirCidadeService,
+    atualizarCidadeService,
+    listarCidadeService,
+    buscarCidadeService
 }

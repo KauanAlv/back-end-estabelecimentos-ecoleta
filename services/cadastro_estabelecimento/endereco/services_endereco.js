@@ -6,17 +6,17 @@
 *******************************************************************************************/
 
 // IMPORT DO ARQUIVO DE CONFIGURAÇÕES DE MENSAGENS DO PROJETO
-const configMessages = require('../../controller/modulo/configMessages.js')
+const configMessages = require('../../../controller/modulo/configMessages.js')
 
 // IMPORT DA DAO
-const enderecoDAO = require('../../model/DAO/endereco/endereco.js')
+const enderecoDAO = require('../../../model/DAO/cadastro_estabelecimento/endereco/endereco.js')
 
 // IMPORT DO SCHEMA DE VALIDAÇÃO
-const enderecoSchema = require('../../schema/endereco/schema_endereco.js')
-const validarDados = require('../../utils/validarDados.js')
+const enderecoSchema = require('../../../schema/endereco/schema_endereco.js')
+const validarDados = require('../../../utils/validarDados.js')
 
 // IMPORT DA FUNÇÃO DE GEOLOCALIZAÇÃO
-const geolocalizacao = require('../../utils/geolocalizacao.js')
+const geolocalizacao = require('../../../utils/geolocalizacao.js')
 
 // Função para validar os dados da endereco
 const validarDadosEndereco = function (endereco) {

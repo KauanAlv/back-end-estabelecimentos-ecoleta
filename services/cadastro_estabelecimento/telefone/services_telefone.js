@@ -3,17 +3,17 @@
  * Data: 20/10/2026 - (terça-feira)
  * Autor: Gabriel Renato
  * Versão: 1.0
- *********************************************************************************************************/
+*********************************************************************************************************/
 
 // IMPORT DO ARQUIVO DE CONFIGURAÇÕES DE MENSAGENS DO PROJETO
-const configMessages = require('../../controller/modulo/configMessages.js')
+const configMessages = require('../../../controller/modulo/configMessages.js')
 
 // IMPORT DA DAO
-const telefoneDAO = require('../../model/DAO/telefone/telefone.js')
+const telefoneDAO = require('../../../model/DAO/cadastro_estabelecimento/telefone/telefone.js')
 
 // IMPORT DO SCHEMA DE VALIDAÇÃO
-const telefoneSchema = require('../../schema/telefone/schema_telefone.js')
-const validarDados = require('../../utils/validarDados.js')
+const telefoneSchema = require('../../../schema/telefone/schema_telefone.js')
+const validarDados = require('../../../utils/validarDados.js')
 
 // Função para validar os dados do telefone
 const validarDadosTelefone = function (numero) {

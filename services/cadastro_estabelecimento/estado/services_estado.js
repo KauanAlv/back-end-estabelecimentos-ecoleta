@@ -1,47 +1,51 @@
 /******************************************************************************************
- * Objetivo: Arquivo responsável por executar as regras de negócio relacionadas a CIDADE
- * Data: 20/10/2026 - (sábado)
+ * Objetivo: Arquivo responsável por executar as regras de negócio relacionadas ao ESTADO
+ * Data: 20/10/2026 - (terça-feira)
  * Autor: Gabriel Renato
  * Versão: 1.0
 *******************************************************************************************/
 
 // IMPORT DO ARQUIVO DE CONFIGURAÇÕES DE MENSAGENS DO PROJETO
-const configMessages = require('../../controller/modulo/configMessages.js')
+const configMessages = require('../../../controller/modulo/configMessages.js')
 
 // IMPORT DA DAO
-const cidadeDAO = require('../../model/DAO/cidade/cidade.js')
+const estadoDAO = require('../../../model/DAO/cadastro_estabelecimento/estado//estado.js')
 
 // IMPORT DO SCHEMA DE VALIDAÇÃO
-const cidadeSchema = require('../../schema/cidade/schema_cidade.js')
-const validarDados = require('../../utils/validarDados.js')
+const estadoSchema = require('../../../schema/estado/schema_estado.js')
+const validarDados = require('../../../utils/validarDados.js')
 
-// Função para validar os dados da cidade
-const validarDadosCidade = function (cidade) {
+// Função para validar os dados do estado
+const validarDadosEstado = function (estado) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
-    return validarDados.validarDadosGeral(cidadeSchema, cidade, customMessages)
+    return validarDados.validarDadosGeral(estadoSchema, estado, customMessages)
 }
 
-// Função para inserir uma nova cidade
-const inserirCidadeService = async function (cidade) {
+// Função para inserir um novo estado
+const inserirEstadoService = async function (estado) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        let validacao = validarDadosCidade(cidade)
+        let validacao = validarDadosEstado(estado)
 
         if (validacao) {
             return validacao
         }
 
-        let result = await cidadeDAO.insertOuSelectCidade(cidade)
+        if (estado && estado.sigla) {
+            estado.sigla = estado.sigla.toUpperCase().trim()
+        }
+
+        let result = await estadoDAO.insertOuSelectEstado(estado)
 
         if (result) {
-            cidade.id = result
+            estado.id = result
 
             customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_CREATED_ITEM.status
             customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_CREATED_ITEM.status_code
             customMessages.DEFAULT_MESSAGE.message = customMessages.SUCCESS_CREATED_ITEM.message
-            customMessages.DEFAULT_MESSAGE.response = cidade
+            customMessages.DEFAULT_MESSAGE.response = estado
 
             return customMessages.DEFAULT_MESSAGE // 201, item criado
         } else {
@@ -53,27 +57,31 @@ const inserirCidadeService = async function (cidade) {
     }
 }
 
-// Função para atualizar uma cidade
-const atualizarCidadeService = async function (cidade, id) {
+// Função para atualizar um estado
+const atualizarEstadoService = async function (estado, id) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        let resultBuscarCidade = await buscarCidadeService(id)
+        let resultBuscarEstado = await buscarEstadoService(id)
 
-        if (resultBuscarCidade.status) {
-            let validacao = validarDadosCidade(cidade)
+        if (resultBuscarEstado.status) {
+            let validacao = validarDadosEstado(estado)
 
             if (!validacao) {
 
-                cidade.id = Number(id)
+                if (estado && estado.sigla) {
+                    estado.sigla = estado.sigla.toUpperCase().trim()
+                }
 
-                let result = await cidadeDAO.updateCidade(cidade)
+                estado.id = Number(id)
+
+                let result = await estadoDAO.updateEstado(estado)
 
                 if (result) {
                     customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_UPDATED_ITEM.status
                     customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_UPDATED_ITEM.status_code
                     customMessages.DEFAULT_MESSAGE.message = customMessages.SUCCESS_UPDATED_ITEM.message
-                    customMessages.DEFAULT_MESSAGE.response = cidade
+                    customMessages.DEFAULT_MESSAGE.response = estado
 
                     return customMessages.DEFAULT_MESSAGE // 200 (atualizado)
                 } else {
@@ -83,7 +91,7 @@ const atualizarCidadeService = async function (cidade, id) {
                 return validacao
             }
         } else {
-            return resultBuscarCidade // 400, 404 ou 500 da services/model
+            return resultBuscarEstado // 400, 404 ou 500 da services/model
         }
 
     } catch (error) {
@@ -91,12 +99,12 @@ const atualizarCidadeService = async function (cidade, id) {
     }
 }
 
-// Função para listar as cidades
-const listarCidadeService = async function () {
+// Função para listar um estado
+const listarEstadoService = async function () {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        let result = await cidadeDAO.selectAllCidade()
+        let result = await estadoDAO.selectAllEstado()
 
         if (result) {
 
@@ -104,7 +112,7 @@ const listarCidadeService = async function () {
                 customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_CREATED_ITEM.status
                 customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_CREATED_ITEM.status_code
                 customMessages.DEFAULT_MESSAGE.response.count = result.length
-                customMessages.DEFAULT_MESSAGE.response.cidade = result
+                customMessages.DEFAULT_MESSAGE.response.estado = result
 
                 return customMessages.DEFAULT_MESSAGE // 200
             } else {
@@ -116,13 +124,12 @@ const listarCidadeService = async function () {
         }
 
     } catch (error) {
-        console.log(error)
         return customMessages.ERROR_INTERNAL_SERVER_SERVICES // 500, na services
     }
 }
 
-// Função para buscar uma cidade
-const buscarCidadeService = async function (id) {
+// Função para buscar um estado
+const buscarEstadoService = async function (id) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
@@ -132,13 +139,13 @@ const buscarCidadeService = async function (id) {
             return validacaoId
         }
 
-        let result = await cidadeDAO.selectByIdCidade(id)
+        let result = await estadoDAO.selectByIdEstado(id)
 
         if (result) {
             if (result.length > 0) {
                 customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_RESPONSE.status
                 customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_RESPONSE.status_code
-                customMessages.DEFAULT_MESSAGE.response.cidade = result
+                customMessages.DEFAULT_MESSAGE.response.estado = result
 
                 return customMessages.DEFAULT_MESSAGE
             } else {
@@ -154,8 +161,8 @@ const buscarCidadeService = async function (id) {
 }
 
 module.exports = {
-    inserirCidadeService,
-    atualizarCidadeService,
-    listarCidadeService,
-    buscarCidadeService
+    inserirEstadoService,
+    atualizarEstadoService,
+    listarEstadoService,
+    buscarEstadoService
 }
