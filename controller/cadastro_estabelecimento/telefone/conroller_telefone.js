@@ -1,15 +1,14 @@
-/**************************************************************************************
- * objetivo: arquivo responsavel por manipular os dados de telefone no banco de dados
- * data: 06/10/2026
- * autor: Gabriel Renato
- * versão: 1.1
- **************************************************************************************/
+/*********************************************************************************************************************
+ * Objetivo: Arquivo responsável por controlar as requisições relacionadas ao TELEFONE e retornar as respostas da API
+ * Data: 06/10/2026 - (terça-feira)
+ * Autor: Gabriel Renato
+ * Versão: 1.1
+*********************************************************************************************************************/
 
-
-const configMessages = require('../modulo/configMessages.js')
+const configMessages = require('../../modulo/configMessages.js')
 
 // IMPORT DA SERVICE
-const telefoneService = require('../../services/telefone/services_telefone.js')
+const telefoneService = require('../../../services/cadastro_estabelecimento/telefone/services_telefone.js')
 
 // Inserir um novo telefone
 const inserirNovoTelefone = async function (numero, contentType) {

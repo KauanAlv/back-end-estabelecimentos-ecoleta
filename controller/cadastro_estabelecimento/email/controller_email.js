@@ -1,13 +1,12 @@
-/**************************************************************************************
- * objetivo: arquivo responsavel por manipular os dados de email no banco de dados
- * data: 06/10/2026
- * autor: Gabriel Renato
- * versão: 2.0
- **************************************************************************************/
+/******************************************************************************************************************
+ * Objetivo: Arquivo responsável por controlar as requisições relacionadas ao EMAIL e retornar as respostas da API
+ * Data: 06/10/2026 - (terça-feira)
+ * Autor: Gabriel Renato
+ * Versão: 2.0
+******************************************************************************************************************/
 
-const configMessages = require('../modulo/configMessages.js')
-const emailService = require('../../services/email/services_email.js')
-
+const configMessages = require('../../modulo/configMessages.js')
+const emailService = require('../../../services/cadastro_estabelecimento/email/services_email.js')
 
 const inserirNovoEmail = async function (email, contentType) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))

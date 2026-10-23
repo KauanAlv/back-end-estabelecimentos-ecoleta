@@ -1,13 +1,13 @@
-/**************************************************************************************
- * objetivo: arquivo responsavel por manipular os dados de cidade no banco de dados
- * data: 09/10/2026
- * autor: Gabriel Renato
- * versão: 1.0
- **************************************************************************************/
+/******************************************************************************************************************
+ * Objetivo: Arquivo responsável por controlar as requisições relacionadas a CIDADE e retornar as respostas da API
+ * Data: 09/10/2026 - (sexta-feira)
+ * Autor: Gabriel Renato
+ * Versão: 1.0
+******************************************************************************************************************/
 
-const configMessages = require('../modulo/configMessages.js')
+const configMessages = require('../../modulo/configMessages.js')
 // IMPORT DA SERVICE
-const cidadeService = require('../../services/cidade/services_cidade.js')
+const cidadeService = require('../../../services/cadastro_estabelecimento/cidade/services_cidade.js')
 
 // Inserir uma nova cidade
 const inserirNovaCidade = async function (cidade, contentType) {

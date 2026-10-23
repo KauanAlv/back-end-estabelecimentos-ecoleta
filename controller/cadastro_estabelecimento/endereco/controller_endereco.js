@@ -3,13 +3,13 @@
  * Data: 20/10/2026 - (terça-feira)
  * Autor: Gabriel Renato
  * Versão: 1.0
- ********************************************************************************************************************/
+********************************************************************************************************************/
 
 // IMPORT DO ARQUIVO DE CONFIGURAÇÕES DE MENSAGENS DO PROJETO
-const configMessages = require('../modulo/configMessages.js')
+const configMessages = require('../../modulo/configMessages.js')
 
 // IMPORT DA SERVICE
-const enderecoService = require('../../services/endereco/services_endereco.js')
+const enderecoService = require('../../../services/cadastro_estabelecimento/endereco/services_endereco.js')
 
 // Inserir uma nova endereco
 const inserirNovaEndereco = async function (endereco, contentType) {

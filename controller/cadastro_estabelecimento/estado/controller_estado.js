@@ -1,13 +1,14 @@
-/**************************************************************************************
- * objetivo: arquivo responsavel por manipular os dados de estado no banco de dados
- * data: 09/10/2026
- * autor: Gabriel Renato
- * versão: 1.0
- **************************************************************************************/
+/*******************************************************************************************************************
+ * Objetivo: Arquivo responsável por controlar as requisições relacionadas ao ESTADO e retornar as respostas da API
+ * Data: 09/10/2026 - (sexta-feira)
+ * Autor: Gabriel Renato
+ * Versão: 1.0
+*******************************************************************************************************************/
 
-const configMessages = require('../modulo/configMessages.js')
+const configMessages = require('../../modulo/configMessages.js')
+
 // IMPORT DA SERVICE
-const estadoService = require('../../services/estado/services_estado.js')
+const estadoService = require('../../../services/cadastro_estabelecimento/estado/services_estado.js')
 
 // Inserir um novo estado
 const inserirNovoEstado = async function (estado, contentType) {
@@ -75,7 +76,7 @@ const buscarEstado = async function (id) {
 }
 
 
-module.exports={
+module.exports = {
     inserirNovoEstado,
     atualizarEstado,
     listarEstado,
