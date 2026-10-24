@@ -12,9 +12,6 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 
-// //Import do middleware de autenticação
-// const auth = require('./middleware/auth.js')
-
 //Criando um objeto do express para criar a API
 const app = express()
 
@@ -37,9 +34,9 @@ app.use(cors(corsOptions))
 const cadastroEstabelecimento = require('./routes/cadastro_estabelecimento.router.js')
 app.use('/v1/ecoleta/cadastro/estabelecimento', cadastroEstabelecimento)
 
-// // ================= LOGIN ESTABELECIMENTO =================
-// const loginEstabelecimento = require('./routes/login_estabelecimento.js')
-// app.use('/v1/ecoleta/login/estabelecimento', loginEstabelecimento)
+// ================= LOGIN ESTABELECIMENTO =================
+const loginEstabelecimento = require('./routes/login_estabelecimento.router.js')
+app.use('/v1/ecoleta/login/estabelecimento', loginEstabelecimento)
 
 // // ================= HOME ESTABELECIMENTO =================
 // const homeEstabelecimento = require('./routes/home_estabelecimento.js')
