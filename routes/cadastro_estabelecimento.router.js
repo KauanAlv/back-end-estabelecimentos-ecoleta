@@ -23,8 +23,6 @@ router.post('/', bodyParserJSON, async function (request, response) {
 
     let result = await controllerCadastroEstabelecimento.cadastrarEstabelecimento(dados, contentType)
 
-    console.log(result)
-
     response.status(result.status_code)
     response.json(result)
 })
