@@ -2,7 +2,7 @@
 
 //padronização dos retornos da API (cabeçalho)
 const DEFAULT_MESSAGE = {
-    api_descreiption: "api para controlar o fluxo do estabelecimento no ecoleta",
+    api_descreiption: "API para controlar o fluxo do estabelecimento no Ecoleta",
     development: "Gabriel Renato",
     version: "1.0.10.26",
     status: Boolean,
@@ -11,12 +11,15 @@ const DEFAULT_MESSAGE = {
 }
 
 
-//Mensagens de ERROS
+//Mensagens de ERRO
 const ERROR_BAD_REQUEST                 = { status: false, status_code: 400, message: "Não foi possível processar a requisição devido a erros de entrada de dados." }
+const ERROR_INVALID_TOKEN               = { status: false, status_code: 401, message: "Token de autenticação não informado, inválido ou expirado." }
+const ERROR_UNAUTHORIZED                = { status: false, status_code: 401, message: "Não foi possível autenticar o usuário, pois as credenciais informadas são inválidas." }
 const ERROR_NOT_FOUND                   = { status: false, status_code: 404, message: "Não foram encontrados dados para retorno." }
+const ERROR_CONFLICT                    = { status: false, status_code: 409, message: "Não foi possível realizar o cadastro, pois alguns dados informados já estão cadastrados." }
 const ERROR_CONTENT_TYPE                = { status: false, status_code: 415, message: "Não foi possível processar a requisição pois o formato de dados encaminhado não é suportado pelo servidor. Deve-se ser utilizado apenas JSON." }
 const ERROR_INTERNAL_SERVER_MODEL       = { status: false, status_code: 500, message: "Não foi possível processar a requisição devido a um erro interno no servidor [MODEL]." }
-const ERROR_INTERNAL_SERVER_SERVICES     = { status: false, status_code: 500, message: "Não foi possível processar a requisição devido a um erro interno no servidor [SERVICES]." }
+const ERROR_INTERNAL_SERVER_SERVICES    = { status: false, status_code: 500, message: "Não foi possível processar a requisição devido a um erro interno no servidor [SERVICES]." }
 const ERROR_INTERNAL_SERVER_CONTROLLER  = { status: false, status_code: 500, message: "Não foi possível processar a requisição devido a um erro interno no servidor [CONTROLLER]." }
 
 //Mensagens de SUCESSO
@@ -29,7 +32,10 @@ const SUCCESS_CREATED_ITEM_WARNING = { status: true, status_code: 201, message: 
 module.exports = {
     DEFAULT_MESSAGE,
     ERROR_BAD_REQUEST,
+    ERROR_INVALID_TOKEN,
+    ERROR_UNAUTHORIZED,
     ERROR_NOT_FOUND,
+    ERROR_CONFLICT,
     ERROR_CONTENT_TYPE,
     ERROR_INTERNAL_SERVER_MODEL,
     ERROR_INTERNAL_SERVER_SERVICES,
