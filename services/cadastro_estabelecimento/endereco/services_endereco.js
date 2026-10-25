@@ -118,8 +118,8 @@ const listarEnderecoService = async function () {
         if (result) {
 
             if (result.length > 0) {
-                customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_CREATED_ITEM.status
-                customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_CREATED_ITEM.status_code
+                customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_RESPONSE.status
+                customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_RESPONSE.status_code
                 customMessages.DEFAULT_MESSAGE.response.count = result.length
                 customMessages.DEFAULT_MESSAGE.response.endereco = result
 
@@ -156,7 +156,7 @@ const buscarEnderecoService = async function (id) {
                 customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_RESPONSE.status_code
                 customMessages.DEFAULT_MESSAGE.response.endereco = result
 
-                return customMessages.DEFAULT_MESSAGE
+                return customMessages.DEFAULT_MESSAGE // 200
             } else {
                 return customMessages.ERROR_NOT_FOUND // 404
             }

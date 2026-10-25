@@ -126,7 +126,7 @@ const listarEstabelecimentoService = async function () {
         if (result) {
 
             if (result.length > 0) {
-                customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_RESPONSE.status // verificar
+                customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_RESPONSE.status
                 customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_RESPONSE.status_code
                 customMessages.DEFAULT_MESSAGE.response.count = result.length
                 customMessages.DEFAULT_MESSAGE.response.estabelecimento = result
@@ -164,7 +164,7 @@ const buscarEstabelecimentoService = async function (id) {
                 customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_RESPONSE.status_code
                 customMessages.DEFAULT_MESSAGE.response.estabelecimento = result
 
-                return customMessages.DEFAULT_MESSAGE
+                return customMessages.DEFAULT_MESSAGE // 200
             } else {
                 return customMessages.ERROR_NOT_FOUND // 404
             }
