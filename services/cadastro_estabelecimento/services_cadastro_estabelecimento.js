@@ -23,6 +23,9 @@ const cidadeDAO = require('../../model/DAO/cadastro_estabelecimento/cidade/cidad
 const enderecoDAO = require('../../model/DAO/cadastro_estabelecimento/endereco/endereco.js')
 const estabelecimentoDAO = require('../../model/DAO/cadastro_estabelecimento/estabelecimento/estabelecimento.js')
 
+// IMPORT DA SERVICES
+const distanciaService = require('../tabelas_auxiliares/distancia/services_distancia_estabelecimento.js')
+
 // IMPORT DA FUNÇÃO DE GEOLOCALIZAÇÃO
 const geolocalizacao = require('../../utils/geolocalizacao.js')
 
@@ -80,7 +83,10 @@ const cadastrarEstabelecimentoService = async function (estabelecimento) {
             !Number.isFinite(coordenadas.latitude) ||
             !Number.isFinite(coordenadas.longitude)
         ) {
-            return customMessages.ERROR_INTERNAL_SERVER_SERVICES // 500, da services
+            coordenadas = {
+                latitude: null,
+                longitude: null
+            }
         }
 
         // Inicia a transação
@@ -165,6 +171,13 @@ const cadastrarEstabelecimentoService = async function (estabelecimento) {
         // Confirmar todas as operações
         await transaction.commit()
 
+        // Calcula as distâncias do novo estabelecimento
+        let resultadoDistancias = await distanciaService.calcularDistanciasNovoEstabelecimento(idEstabelecimento)
+
+        if (!resultadoDistancias) {
+            console.error('Não foi possível cadastrar todas as distâncias do estabelecimento.')
+        }
+
         // Prepara a resposta
         let resposta = {
             id: idEstabelecimento,
@@ -180,7 +193,7 @@ const cadastrarEstabelecimentoService = async function (estabelecimento) {
         return customMessages.DEFAULT_MESSAGE // 201, item criado
 
     } catch (error) {
-        
+
         // Desfaz as operações se a transação ainda estiver ativa
         if (transaction && !transaction.isCompleted())
             await transaction.rollback()
