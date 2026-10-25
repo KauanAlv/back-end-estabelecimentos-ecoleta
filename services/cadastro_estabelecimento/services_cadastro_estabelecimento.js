@@ -57,7 +57,7 @@ const cadastrarEstabelecimentoService = async function (estabelecimento) {
         let empresaExistente = await estabelecimentoDAO.selectEstabelecimentoByCnpj(estabelecimento.cnpj)
 
         if (empresaExistente === false)
-            return customMessages.ERROR_INTERNAL_SERVER_SERVICES // 500, na Services
+            return customMessages.ERROR_INTERNAL_SERVER_MODEL // 500, na model
 
         if (empresaExistente.length > 0)
             return customMessages.ERROR_CONFLICT //  409, Dados já cadastrados

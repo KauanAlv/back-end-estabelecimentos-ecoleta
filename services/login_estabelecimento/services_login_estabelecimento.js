@@ -46,7 +46,7 @@ const loginEstabelecimentoService = async function (dadosLogin) {
         let resultado = await estabelecimentoDAO.selectEstabelecimentoByCnpj(dadosLogin.cnpj)
 
         if (resultado === false)
-            return customMessages.ERROR_INTERNAL_SERVER_SERVICES // 500, na Services
+            return customMessages.ERROR_INTERNAL_SERVER_MODEL // 500, na model
 
         if (resultado.length === 0)
             return customMessages.ERROR_UNAUTHORIZED // 401, credenciais inválidas
