@@ -183,6 +183,103 @@ const buscarCoordenadasEndereco = async function (endereco) {
     }
 }
 
+// Função para calcular a distância entre dois endereços
+const calcularDistancia = async function (origem, destino) {
+    try {
+
+        // VERIFICA SE AS COORDENADAS EXISTEM
+        if (
+            !origem ||
+            !destino ||
+            origem.latitude == null ||
+            origem.longitude == null ||
+            destino.latitude == null ||
+            destino.longitude == null
+        ) {
+            console.log('Não foi possível calcular a distância: coordenadas ausentes.')
+            return null
+        }
+
+        // CONVERTE AS COORDENADAS PARA NÚMEROS
+        let latitudeOrigem = Number(origem.latitude)
+        let longitudeOrigem = Number(origem.longitude)
+
+        let latitudeDestino = Number(destino.latitude)
+        let longitudeDestino = Number(destino.longitude)
+
+        // VALIDA AS COORDENADAS
+        if (
+            !Number.isFinite(latitudeOrigem) ||
+            !Number.isFinite(longitudeOrigem) ||
+            !Number.isFinite(latitudeDestino) ||
+            !Number.isFinite(longitudeDestino) ||
+            Math.abs(latitudeOrigem) > 90 ||
+            Math.abs(latitudeDestino) > 90 ||
+            Math.abs(longitudeOrigem) > 180 ||
+            Math.abs(longitudeDestino) > 180
+        ) {
+            console.log('Não foi possível calcular a distância: coordenadas inválidas.')
+            return null
+        }
+
+        // URL DA API DE CÁLCULO DE DISTÂNCIA
+        let url = 'https://api.heigit.org/openrouteservice/v2/directions/driving-car'
+
+        // CONSULTA A API
+        let resposta = await axios.post(
+            url,
+            {
+                coordinates: [
+                    [longitudeOrigem, latitudeOrigem],
+                    [longitudeDestino, latitudeDestino]
+                ]
+            },
+            {
+                headers: {
+                    'Authorization': process.env.GEOLC_DISTANCIA_API_KEY,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                timeout: 15000
+            }
+        )
+
+        // OBTÉM A DISTÂNCIA RETORNADA PELA API EM METROS
+        let distanciaMetros = resposta.data?.routes?.[0]?.summary?.distance
+
+        // VALIDA A DISTÂNCIA
+        if (
+            typeof distanciaMetros !== 'number' ||
+            !Number.isFinite(distanciaMetros) ||
+            distanciaMetros < 0
+        ) {
+            console.log('A API não retornou uma distância válida.')
+            return null
+        }
+
+        // CONVERTE A DISTÂNCIA DE METROS PARA QUILÔMETROS
+        let distanciaKm = Number((distanciaMetros / 1000).toFixed(2))
+
+        console.log('Distância calculada:', distanciaKm, 'km')
+
+        // RETORNA A DISTÂNCIA EM QUILÔMETROS
+        return distanciaKm
+
+    } catch (erro) {
+
+        // TRATA ERROS DA CONSULTA
+        console.error(
+            'Erro ao consultar a API de distância:',
+            erro.response
+                ? 'Status HTTP ' + erro.response.status
+                : erro.message
+        )
+
+        return null
+    }
+}
+
 module.exports = {
-    buscarCoordenadasEndereco
+    buscarCoordenadasEndereco,
+    calcularDistancia
 }
