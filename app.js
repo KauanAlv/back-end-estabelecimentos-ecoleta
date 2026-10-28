@@ -43,6 +43,14 @@ app.use('/v1/ecoleta/login/estabelecimento', loginEstabelecimento)
 // app.use('/v1/ecoleta/estabelecimento/home', homeEstabelecimento)
 
 
+// ==========================
+//     ENDPOINTS AUXILIARES
+// ==========================
+
+// ================= TIPO DE MATERIAL =================
+const tipoMaterial = require('./routes/tipo_material/tipo_material_estabelecimento.router.js')
+app.use('/v1/ecoleta/tipo-material', tipoMaterial)
+
 
 
 // ================= EMAIL =================
