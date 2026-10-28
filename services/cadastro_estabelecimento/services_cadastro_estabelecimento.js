@@ -50,6 +50,9 @@ const cadastrarEstabelecimentoService = async function (estabelecimento) {
             return validacao
         }
 
+        //Remove o hifen do cep
+        estabelecimento.cep = estabelecimento.cep.replace('-','')
+
         //Normaliza o CNPJ
         estabelecimento.cnpj = estabelecimento.cnpj.trim().toUpperCase()
 
