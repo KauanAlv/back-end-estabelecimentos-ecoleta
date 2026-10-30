@@ -1,9 +1,9 @@
-/******************************************************************************************
+/********************************************************************************************
  * Objetivo: Arquivo responsável por manipular os dados da TELA HOME no banco de dados MySQL
  * Data: 22/10/2026 - (quinta-feira)
  * Autor: Gabriel Renato
  * Versão: 1.0
-*******************************************************************************************/
+*********************************************************************************************/
 
 // Import da conexão global com o Banco de Dados MySQL
 const knexConection = require('../../global_knex/global_knex.js')

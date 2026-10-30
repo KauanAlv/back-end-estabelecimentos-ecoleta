@@ -1,5 +1,5 @@
 /***************************************************************************************************************
- * Objetivo: Arquivo responsável por executar as regras de negócio relacionadas a TELA HOME DA EMPRESA COLETORA
+ * Objetivo: Arquivo responsável por executar as regras de negócio relacionadas a TELA HOME DO ESTABELECIMENTO
  * Data: 22/10/2026 - (quinta-feira)
  * Autor: Kauan Alves Pereira
  * Versão: 1.0
