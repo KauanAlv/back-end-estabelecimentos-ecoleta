@@ -13,10 +13,11 @@ const recusarOfertasPendentesResiduo = async function (idResiduo, transaction = 
     try {
         let connection = transaction || knexConection
 
-        let sql = 'call procRecusarOfertasPendentesResiduo(?);'
+        let sql = 'call procRecusarOfertasPendentesResiduo(?, ?);'
 
         let result = await connection.raw(sql, [
-            idResiduo
+            idResiduo,
+            idEstabelecimento
         ])
 
         if (result && result[0] && result[0][0] && result[0][0][0])
