@@ -50,6 +50,10 @@ app.use('/v1/ecoleta/estabelecimento/residuos', residuoEstabelecimento)
 const meusResiduoEstabelecimento = require('./routes/meus_residuos_estabelecimento/meus_residuos_estabelecimento.router.js')
 app.use('/v1/ecoleta/estabelecimento/meus-residuos', meusResiduoEstabelecimento)
 
+// ================= HISTORICO ESTABELECIMENTO =================
+const historicoEstabelecimento = require('./routes/historico_estabelecimento/historico_estabelecimento.router.js')
+app.use('/v1/ecoleta/estabelecimento/historico', historicoEstabelecimento)
+
 
 // ==========================
 //     ENDPOINTS AUXILIARES
