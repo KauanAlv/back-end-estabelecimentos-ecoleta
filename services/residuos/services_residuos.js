@@ -291,6 +291,7 @@ const cancelarResiduoService = async function (idResiduo, idEstabelecimento) {
         // Recusa todas as ofertas pendentes vinculadas ao resíduo cancelado
         let ofertasRecusadas = await statusOfertaHistoricoDAO.recusarOfertasPendentesResiduo(
             Number(idResiduo),
+            Number(idEstabelecimento),
             transaction
         )
 
