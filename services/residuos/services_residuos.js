@@ -15,6 +15,7 @@ const validarDados = require('../../utils/validarDados.js')
 // IMPORT DAS DAOs
 const residuoDAO = require('../../model/DAO/residuos/residuo/residuo.js')
 const statusResiduoHistoricoDAO = require('../../model/DAO/residuos/status_residuo_historico/status_residuo_historico.js')
+const statusOfertaHistoricoDAO = require('../../model/DAO/residuos/status_oferta_historico/status_oferta_historico.js')
 
 // IMPORT DA CONFIGURAÇÃO GLOBAL DO KNEX (PARA EXECUTAR A TRANSACTION)
 const knexConection = require('../../model/global_knex/global_knex.js')
@@ -283,6 +284,17 @@ const cancelarResiduoService = async function (idResiduo, idEstabelecimento) {
         )
 
         if (idHistorico === false) {
+            await transaction.rollback()
+            return customMessages.ERROR_INTERNAL_SERVER_MODEL // 500, na model
+        }
+
+        // Recusa todas as ofertas pendentes vinculadas ao resíduo cancelado
+        let ofertasRecusadas = await statusOfertaHistoricoDAO.recusarOfertasPendentesResiduo(
+            Number(idResiduo),
+            transaction
+        )
+
+        if (ofertasRecusadas === false) {
             await transaction.rollback()
             return customMessages.ERROR_INTERNAL_SERVER_MODEL // 500, na model
         }
