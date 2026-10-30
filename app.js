@@ -38,9 +38,9 @@ app.use('/v1/ecoleta/cadastro/estabelecimento', cadastroEstabelecimento)
 const loginEstabelecimento = require('./routes/login_estabelecimento.router.js')
 app.use('/v1/ecoleta/login/estabelecimento', loginEstabelecimento)
 
-// // ================= HOME ESTABELECIMENTO =================
-// const homeEstabelecimento = require('./routes/home_estabelecimento.js')
-// app.use('/v1/ecoleta/estabelecimento/home', homeEstabelecimento)
+// ================= HOME ESTABELECIMENTO =================
+const homeEstabelecimento = require('./routes/home_estabelecimento.router.js')
+app.use('/v1/ecoleta/estabelecimento/home', homeEstabelecimento)
 
 // ================= MANIPULAR RESÍDUOS ESTABELECIMENTO =================
 const residuoEstabelecimento = require('./routes/residuos/residuos_estabelecimento.router.js')
