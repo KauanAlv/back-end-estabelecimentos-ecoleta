@@ -46,6 +46,10 @@ app.use('/v1/ecoleta/estabelecimento/home', homeEstabelecimento)
 const residuoEstabelecimento = require('./routes/residuos/residuos_estabelecimento.router.js')
 app.use('/v1/ecoleta/estabelecimento/residuos', residuoEstabelecimento)
 
+// ================= MEUS RESÍDUOS ESTABELECIMENTO =================
+const meusResiduoEstabelecimento = require('./routes/meus_residuos_estabelecimento/meus_residuos_estabelecimento.router.js')
+app.use('/v1/ecoleta/estabelecimento/meus-residuos', meusResiduoEstabelecimento)
+
 
 // ==========================
 //     ENDPOINTS AUXILIARES
