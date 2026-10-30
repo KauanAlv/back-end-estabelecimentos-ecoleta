@@ -42,6 +42,18 @@ app.use('/v1/ecoleta/login/estabelecimento', loginEstabelecimento)
 // const homeEstabelecimento = require('./routes/home_estabelecimento.js')
 // app.use('/v1/ecoleta/estabelecimento/home', homeEstabelecimento)
 
+// ================= MANIPULAR RESÍDUOS ESTABELECIMENTO =================
+const residuoEstabelecimento = require('./routes/residuos/residuos_estabelecimento.router.js')
+app.use('/v1/ecoleta/estabelecimento/residuos', residuoEstabelecimento)
+
+
+// ==========================
+//     ENDPOINTS AUXILIARES
+// ==========================
+
+// ================= TIPO DE MATERIAL =================
+const tipoMaterial = require('./routes/tipo_material/tipo_material_estabelecimento.router.js')
+app.use('/v1/ecoleta/tipo-material', tipoMaterial)
 
 
 
