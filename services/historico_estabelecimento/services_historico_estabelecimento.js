@@ -42,11 +42,14 @@ const buscarHistoricoEstabelecimentoService = async function (idEstabelecimento)
         // Formata a data disponível das ofertas
         for (let oferta of resultResumo) {
             oferta.data_disponivel = formatarData(oferta.data_disponivel)
+
+            // Remove o atributo utilizado apenas para ordenação
+            delete oferta.data_hora_evento
         }
 
         // Prepara a resposta
         let resposta = {
-            resumo: resultResumo[0]
+            resumo: resultResumo
         }
 
         customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_RESPONSE.status
@@ -57,7 +60,6 @@ const buscarHistoricoEstabelecimentoService = async function (idEstabelecimento)
         return customMessages.DEFAULT_MESSAGE // 200, consulta realizada
 
     } catch (error) {
-        console.log(error)
         return customMessages.ERROR_INTERNAL_SERVER_SERVICES // 500, na services
     }
 }
