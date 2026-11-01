@@ -46,9 +46,18 @@ app.use('/v1/ecoleta/estabelecimento/home', homeEstabelecimento)
 const residuoEstabelecimento = require('./routes/residuos/residuos_estabelecimento.router.js')
 app.use('/v1/ecoleta/estabelecimento/residuos', residuoEstabelecimento)
 
+// ================= MEUS RESÍDUOS ESTABELECIMENTO =================
+const meusResiduoEstabelecimento = require('./routes/meus_residuos_estabelecimento/meus_residuos_estabelecimento.router.js')
+app.use('/v1/ecoleta/estabelecimento/meus-residuos', meusResiduoEstabelecimento)
+
+// ================= HISTORICO ESTABELECIMENTO =================
+const historicoEstabelecimento = require('./routes/historico_estabelecimento/historico_estabelecimento.router.js')
+app.use('/v1/ecoleta/estabelecimento/historico', historicoEstabelecimento)
+
 // ================= MANIPULAR OFERTAS ESTABELECIMENTO =================
 const ofertaEstabelecimento = require('./routes/ofertas/ofertas_estabelecimento.router.js')
 app.use('/v1/ecoleta/estabelecimento/ofertas', ofertaEstabelecimento)
+
 
 // ==========================
 //     ENDPOINTS AUXILIARES
