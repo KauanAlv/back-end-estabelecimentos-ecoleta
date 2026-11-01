@@ -34,6 +34,33 @@ const selectByIdOfertaInicial = async function (id, transaction = null) {
     }
 }
 
+// Consulta e bloqueia a oferta para verificar seu status mais recente
+const selectByIdOfertaInicialForUpdate = async function (id, transaction = null) {
+    try {
+        let connection = transaction || knexConection
+
+        let sql = 'call procOfertaInicial(?, ?, ?, ?, ?, ?);'
+
+        let result = await connection.raw(sql, [
+            'SELECT_BY_ID_FOR_UPDATE',
+            null,
+            null,
+            null,
+            null,
+            id
+        ])
+
+        if (Array.isArray(result[0][0]))
+            return result[0][0]
+        else
+            return false
+
+    } catch (error) {
+        return false
+    }
+}
+
 module.exports = {
-    selectByIdOfertaInicial
+    selectByIdOfertaInicial,
+    selectByIdOfertaInicialForUpdate
 }
