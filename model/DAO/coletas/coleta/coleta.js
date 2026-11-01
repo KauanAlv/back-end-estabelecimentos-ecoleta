@@ -12,11 +12,17 @@ const insertColeta = async function (coleta, transaction = null) {
     try {
         let connection = transaction || knexConection
 
-        let sql = 'call procColeta(?, ?);'
+        let sql = 'call procColeta(?, ?, ?, ?, ?, ?, ?, ?);'
 
         let result = await connection.raw(sql, [
             'INSERT',
-            coleta.id_oferta_final
+            coleta.id_oferta_final,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
         ])
 
         if (result && result[0][0][0].id)
