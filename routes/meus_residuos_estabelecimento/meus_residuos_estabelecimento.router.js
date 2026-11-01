@@ -20,7 +20,7 @@ router.get('/', auth.verifyToken, async function (request, response) {
     // Obtém o ID da empresa autenticada pelo JWT
     let idEstabelecimento = request.id_estabelecimento
 
-    // Consulta os dados da Home
+    // Consulta os dados da Tela de Meus Resíduos
     let result = await controllerMeusResiduos.buscarMeusResiduosEstabelecimento(idEstabelecimento)
 
     response.status(result.status_code)
@@ -28,13 +28,13 @@ router.get('/', auth.verifyToken, async function (request, response) {
 })
 
 
-router.get('/:id', auth.verifyToken, async function (request, response) {
+router.get('/:id_residuo', auth.verifyToken, async function (request, response) {
 
-    let idResiduo = request.params.id
+    let idResiduo = request.params.id_residuo
     // Obtém o ID da empresa autenticada pelo JWT
     let idEstabelecimento = request.id_estabelecimento
 
-    // Consulta os dados da Home
+    // Consulta os dados da coleta Agendada
     let result = await controllerMeusResiduos.buscarMeuResiduoDisponivelById(idEstabelecimento, idResiduo)
 
     response.status(result.status_code)
