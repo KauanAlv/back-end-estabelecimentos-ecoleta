@@ -15,7 +15,7 @@ const validarDados = require('../../utils/validarDados.js')
 // IMPORT DAS DAOs
 const residuoDAO = require('../../model/DAO/residuos/residuo/residuo.js')
 const statusResiduoHistoricoDAO = require('../../model/DAO/residuos/status_residuo_historico/status_residuo_historico.js')
-const statusOfertaHistoricoDAO = require('../../model/DAO/residuos/status_oferta_historico/status_oferta_historico.js')
+const statusOfertaHistoricoDAO = require('../../model/DAO/ofertas/status_oferta_historico/status_oferta_historico.js')
 
 // IMPORT DA CONFIGURAÇÃO GLOBAL DO KNEX (PARA EXECUTAR A TRANSACTION)
 const knexConection = require('../../model/global_knex/global_knex.js')
