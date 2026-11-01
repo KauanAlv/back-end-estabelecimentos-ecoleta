@@ -44,6 +44,7 @@ const cadastroResiduoSchema = Joi.object({
 
     data_disponivel: Joi.string()
         .pattern(/^\d{2}\/\d{2}\/\d{4}$/)
+        // Permite criar uma validação personalizada
         .custom((value, helpers) => {
             let [dia, mes, ano] = value.split('/').map(Number)
             let data = new Date(Date.UTC(ano, mes - 1, dia))
@@ -55,6 +56,29 @@ const cadastroResiduoSchema = Joi.object({
             )
                 return helpers.error('any.invalid')
 
+            // Obtém a data atual no horário de Brasília
+                                //Intl.DateTimeFormat() é um recurso nativo para formatar datas
+            let partesData = new Intl.DateTimeFormat('pt-BR' , { //Formatação brasileira
+                timeZone: 'America/Sao_Paulo', //Utiliza o horário de Brasília
+                year: 'numeric', //Ano completo, como 2026
+                month: '2-digit', //Mês com dois dígitos
+                day: '2-digit' //Dia com dois dígitos
+
+                // Separa a data em componentes,EX: [{  type: 'day', value: '31' }, { type: 'literal', value: '/' },]
+            }).formatToParts(new Date())
+
+            // Extraindo o dia, mês e ano atuais
+            let anoAtual = Number(partesData.find(parte => parte.type === 'year').value)
+            let mesAtual = Number(partesData.find(parte => parte.type === 'month').value)
+            let diaAtual = Number(partesData.find(parte => parte.type === 'day').value)
+
+            // Assim como o getTime, o Date.UTC() também retorna o Time em milissegundos.
+            let dataAtual = Date.UTC(anoAtual, mesAtual - 1, diaAtual)
+
+            // Impede datas anteriores à data atual
+            if (data.getTime() < dataAtual)
+                return helpers.error('date.past')
+
             return value
         })
         .required()
@@ -62,6 +86,7 @@ const cadastroResiduoSchema = Joi.object({
             'string.empty': 'O campo Data Disponível não pode ficar vazio.',
             'string.pattern.base': 'A Data Disponível deve estar no formato DD/MM/AAAA.',
             'any.invalid': 'A Data Disponível é inválida.',
+            'date.past': 'A Data Disponível não pode ser anterior à data atual.',
             'any.required': 'O campo Data Disponível é obrigatório.',
             'string.base': 'A Data Disponível deve ser um texto.'
         }),
