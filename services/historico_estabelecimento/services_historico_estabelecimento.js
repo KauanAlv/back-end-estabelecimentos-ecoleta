@@ -1,9 +1,9 @@
-/***************************************************************************************************************
- * Objetivo: Arquivo responsável por executar as regras de negócio relacionadas a TELA HOME DO ESTABELECIMENTO
+/**********************************************************************************************************************
+ * Objetivo: Arquivo responsável por executar as regras de negócio relacionadas a TELA DE HISTÓRICO DO ESTABELECIMENTO
  * Data: 30/10/2026 - (sexta-feira)
  * Autor: Gabriel Renato
  * Versão: 1.0
-***************************************************************************************************************/
+**********************************************************************************************************************/
 
 // IMPORT DO ARQUIVO DE CONFIGURAÇÕES DE MENSAGENS DO PROJETO
 const configMessages = require('../../controller/modulo/configMessages.js')
@@ -21,7 +21,7 @@ const formatarData = function (data) {
     })
 }
 
-// Busca os dados da Home da empresa coletora
+// Busca os dados do histórico para o estabelecimento
 const buscarHistoricoEstabelecimentoService = async function (idEstabelecimento) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 

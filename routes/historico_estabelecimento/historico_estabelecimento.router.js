@@ -20,7 +20,7 @@ router.get('/', auth.verifyToken, async function (request, response) {
     // Obtém o ID da empresa autenticada pelo JWT
     let idEstabelecimento = request.id_estabelecimento
 
-    // Consulta os dados da Home
+    // Consulta os dados do Histórico
     let result = await controllerHistoricoEstabelecimento.buscarHistoricoEstabelecimento(idEstabelecimento)
 
     response.status(result.status_code)

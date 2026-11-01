@@ -1,9 +1,9 @@
-/***************************************************************************************************************
- * Objetivo: Arquivo responsável por executar as regras de negócio relacionadas a TELA HOME DO ESTABELECIMENTO
+/***************************************************************************************************************************
+ * Objetivo: Arquivo responsável por executar as regras de negócio relacionadas a TELA DE MEUS RESÍDUOS DO ESTABELECIMENTO
  * Data: 22/10/2026 - (quinta-feira)
  * Autor: Kauan Alves Pereira
  * Versão: 1.0
-***************************************************************************************************************/
+***************************************************************************************************************************/
 
 // IMPORT DO ARQUIVO DE CONFIGURAÇÕES DE MENSAGENS DO PROJETO
 const configMessages = require('../../controller/modulo/configMessages.js')
@@ -17,7 +17,7 @@ const meusResiduosEstabelecimentoDAO = require('../../model/DAO/meus_residuos_es
 const validarDadosConsultaMeusResiduosEstabelecimento = function (idEstabelecimento, idResiduo = null) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
-    // Valida o ID da empresa coletora autenticada
+    // Valida o ID do estabelecimento autenticado
     let validarEstabelecimento = validarDados.validarId(idEstabelecimento, customMessages)
 
     if (validarEstabelecimento)
@@ -56,7 +56,7 @@ const buscarMeusResiduosEstabelecimento = async function (idEstabelecimento) {
             return validacao
         }
 
-        // Busca todos os resíduos visíveis para a empresa coletora
+        // Busca todos os resíduos visíveis para o estabelecimento
         let residuos = await meusResiduosEstabelecimentoDAO.selectMeusResiduosEstabelecimento(idEstabelecimento)
 
         if (residuos === false)
@@ -84,7 +84,7 @@ const buscarMeusResiduosEstabelecimento = async function (idEstabelecimento) {
     }
 }
 
-// Função para buscar os detalhes de um resíduo disponível
+// Função para buscar os detalhes de uma coleta Agendada
 const buscarMeuResiduoDisponivelById = async function (idEstabelecimento, idResiduo) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
@@ -96,7 +96,6 @@ const buscarMeuResiduoDisponivelById = async function (idEstabelecimento, idResi
             return validacao
         }
 
-        // Busca os detalhes do resíduo disponível
         let residuo = await meusResiduosEstabelecimentoDAO.selectMeuResiduoEstabelecimento(idEstabelecimento, idResiduo)
 
         if (residuo === false)
@@ -121,7 +120,6 @@ const buscarMeuResiduoDisponivelById = async function (idEstabelecimento, idResi
         return customMessages.ERROR_INTERNAL_SERVER_SERVICES // 500, na services
     }
 }
-
 
 module.exports = {
     buscarMeusResiduosEstabelecimento,

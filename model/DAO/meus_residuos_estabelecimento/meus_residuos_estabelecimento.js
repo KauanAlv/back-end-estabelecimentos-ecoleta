@@ -1,14 +1,14 @@
-/********************************************************************************************
- * Objetivo: Arquivo responsável por manipular os dados da TELA HOME no banco de dados MySQL
+/********************************************************************************************************
+ * Objetivo: Arquivo responsável por manipular os dados da TELA DE MEUS RESÍDUOS no banco de dados MySQL
  * Data: 22/10/2026 - (quinta-feira)
  * Autor: Gabriel Renato
  * Versão: 1.0
-*********************************************************************************************/
+********************************************************************************************************/
 
 // Import da conexão global com o Banco de Dados MySQL
 const knexConection = require('../../global_knex/global_knex.js')
 
-// Consulta o resumo da Home
+// Consulta os dados para a tela de Meus Resíduos
 const selectMeusResiduosEstabelecimento = async function (idEstabelecimento) {
     try {          
         let sql = `select * from vw_meus_residuos_estabelecimento where id_estabelecimento = ?;`
@@ -26,7 +26,7 @@ const selectMeusResiduosEstabelecimento = async function (idEstabelecimento) {
     }
 }
 
-// Consulta as ofertas exibidas na Home
+// Consulta os detalhes de uma coleta Agendada
 const selectMeuResiduoEstabelecimento = async function (idEstabelecimento, idResiduo) {
     try {         
         let sql = `select * from vw_coleta_residuo_estabelecimento where id_estabelecimento = ? and id_residuo = ?;`
