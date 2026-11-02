@@ -118,6 +118,7 @@ const buscarConcluidaHistoricoEstabelecimentoService = async function (idColeta,
         // Formata a data disponível das ofertas
         for (let oferta of resultResumo) {
             oferta.data_disponivel = formatarData(oferta.data_disponivel)
+            oferta.data_coleta = formatarData(oferta.data_coleta)
 
             // Remove o atributo utilizado apenas para ordenação
             delete oferta.data_hora_evento
