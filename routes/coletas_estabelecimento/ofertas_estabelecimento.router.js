@@ -13,7 +13,7 @@ const bodyParserJSON = bodyParser.json()  //Permitindo a utilização do JSON no
 const router = express.Router() // Cria um objeto de rota para os Endpoints
 
 // IMPORT DA CONTROLLER
-const controllerOfertas = require('../../controller/ofertas_estabelecimento/controller_ofertas_estabelecimento.js')
+const controllerOfertas = require('../../controller/coletas_estabelecimento/ofertas_estabelecimento/controller_ofertas_estabelecimento.js')
 
 // IMPORT DO MIDDLEWARE DE AUTENTICAÇÃO
 const auth = require('../../middleware/auth.js')

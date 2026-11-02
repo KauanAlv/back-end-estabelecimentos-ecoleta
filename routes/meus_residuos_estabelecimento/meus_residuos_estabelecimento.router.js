@@ -9,7 +9,7 @@ const express = require('express') // Import do express
 
 const router = express.Router() // Cria um objeto de rota para os Endpoints
 
-const controllerMeusResiduos = require('../../controller/meus_residuos/controller_meus_residuos.js')
+const controllerMeusResiduos = require('../../controller/meus_residuos_estabelecimento/meus_residuos/controller_meus_residuos.js')
 
 // IMPORT DO MIDDLEWARE DE AUTENTICAÇÃO
 const auth = require('../../middleware/auth.js')

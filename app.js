@@ -38,13 +38,13 @@ app.use('/v1/ecoleta/cadastro/estabelecimento', cadastroEstabelecimento)
 
 // TELA DE LOGIN
 // ================= LOGIN ESTABELECIMENTO =================
-const loginEstabelecimento = require('./routes/login_estabelecimento.router.js')
+const loginEstabelecimento = require('./routes/login_estabelecimento/login_estabelecimento.router.js')
 app.use('/v1/ecoleta/login/estabelecimento', loginEstabelecimento)
 
 
 // TELA HOME
 // ================= HOME ESTABELECIMENTO =================
-const homeEstabelecimento = require('./routes/home_estabelecimento.router.js')
+const homeEstabelecimento = require('./routes/home_estabelecimento/home_estabelecimento.router.js')
 app.use('/v1/ecoleta/estabelecimento/home', homeEstabelecimento)
 
 
@@ -82,27 +82,27 @@ app.use('/v1/ecoleta/tipo-material', tipoMaterial)
 
 
 // ================= EMAIL =================
-const emailRouter = require('./routes/email.router.js')
+const emailRouter = require('./routes/cadastro_estabelecimento/email.router.js')
 app.use('/v1/ecoleta/email', emailRouter)
 
 // ================= TELEFONE =================
-const telefoneRouter = require('./routes/telefone.router.js')
+const telefoneRouter = require('./routes/cadastro_estabelecimento/telefone.router.js')
 app.use('/v1/ecoleta/telefone', telefoneRouter)
 
 // ================= ESTADO =================
-const estadoRouter = require('./routes/estado.router.js')
+const estadoRouter = require('./routes/cadastro_estabelecimento/estado.router.js')
 app.use('/v1/ecoleta/estado', estadoRouter)
 
 // ================= CIDADE =================
-const cidadeRouter = require('./routes/cidade.router.js')
+const cidadeRouter = require('./routes/cadastro_estabelecimento/cidade.router.js')
 app.use('/v1/ecoleta/cidade', cidadeRouter)
 
 // ================= ENDERECO =================
-const enderecoRouter = require('./routes/endereco.router.js')
+const enderecoRouter = require('./routes/cadastro_estabelecimento/endereco.router.js')
 app.use('/v1/ecoleta/endereco', enderecoRouter)
 
 // ================= ESTABELECIMENTO =================
-const estabelecimentoRouter = require('./routes/estabelecimento.router.js')
+const estabelecimentoRouter = require('./routes/cadastro_estabelecimento/estabelecimento.router.js')
 app.use('/v1/ecoleta/estabelecimento', estabelecimentoRouter)
 
 // ================= START-API =================
