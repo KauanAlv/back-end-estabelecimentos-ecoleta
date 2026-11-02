@@ -1,9 +1,9 @@
-/**************************************************************************************
- * objetivo: arquivo responsavel por ser a API
+/***************************************************************************************************************************
+ * objetivo: Arquivo principal da API, responsável pelas configurações do Express, CORS, rotas e inicialização do servidor
  * data: 07/10/2026
  * autor: Gabriel Renato
  * versão: 1.0
- **************************************************************************************/
+***************************************************************************************************************************/
 
 //Import no .env
 require('dotenv').config()
@@ -30,33 +30,44 @@ app.use(cors(corsOptions))
 //     ENDPOINTS 
 // =================
 
+// TELA DE CADASTRO
 // ================= CADASTRO ESTABELECIMENTO =================
-const cadastroEstabelecimento = require('./routes/cadastro_estabelecimento.router.js')
+const cadastroEstabelecimento = require('./routes/cadastro_estabelecimento/cadastro_estabelecimento.router.js')
 app.use('/v1/ecoleta/cadastro/estabelecimento', cadastroEstabelecimento)
 
+
+// TELA DE LOGIN
 // ================= LOGIN ESTABELECIMENTO =================
 const loginEstabelecimento = require('./routes/login_estabelecimento.router.js')
 app.use('/v1/ecoleta/login/estabelecimento', loginEstabelecimento)
 
+
+// TELA HOME
 // ================= HOME ESTABELECIMENTO =================
 const homeEstabelecimento = require('./routes/home_estabelecimento.router.js')
 app.use('/v1/ecoleta/estabelecimento/home', homeEstabelecimento)
 
-// ================= MANIPULAR RESÍDUOS ESTABELECIMENTO =================
-const residuoEstabelecimento = require('./routes/residuos/residuos_estabelecimento.router.js')
-app.use('/v1/ecoleta/estabelecimento/residuos', residuoEstabelecimento)
 
+// TELA DE MEUS RESÍDUOS HOME
 // ================= MEUS RESÍDUOS ESTABELECIMENTO =================
 const meusResiduoEstabelecimento = require('./routes/meus_residuos_estabelecimento/meus_residuos_estabelecimento.router.js')
 app.use('/v1/ecoleta/estabelecimento/meus-residuos', meusResiduoEstabelecimento)
 
+// ================= MANIPULAR RESÍDUOS ESTABELECIMENTO =================
+const residuoEstabelecimento = require('./routes/meus_residuos_estabelecimento/residuos_estabelecimento.router.js')
+app.use('/v1/ecoleta/estabelecimento/residuos', residuoEstabelecimento)
+
+
+// TELA DE COLETAS
+// ================= MANIPULAR OFERTAS ESTABELECIMENTO =================
+const ofertaEstabelecimento = require('./routes/coletas_estabelecimento/ofertas_estabelecimento.router.js')
+app.use('/v1/ecoleta/estabelecimento/ofertas', ofertaEstabelecimento)
+
+
+// TELA DE HISTÓRICO
 // ================= HISTORICO ESTABELECIMENTO =================
 const historicoEstabelecimento = require('./routes/historico_estabelecimento/historico_estabelecimento.router.js')
 app.use('/v1/ecoleta/estabelecimento/historico', historicoEstabelecimento)
-
-// ================= MANIPULAR OFERTAS ESTABELECIMENTO =================
-const ofertaEstabelecimento = require('./routes/ofertas/ofertas_estabelecimento.router.js')
-app.use('/v1/ecoleta/estabelecimento/ofertas', ofertaEstabelecimento)
 
 
 // ==========================
@@ -66,6 +77,7 @@ app.use('/v1/ecoleta/estabelecimento/ofertas', ofertaEstabelecimento)
 // ================= TIPO DE MATERIAL =================
 const tipoMaterial = require('./routes/tipo_material/tipo_material_estabelecimento.router.js')
 app.use('/v1/ecoleta/tipo-material', tipoMaterial)
+
 
 
 

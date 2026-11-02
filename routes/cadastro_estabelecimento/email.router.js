@@ -12,7 +12,7 @@ const bodyParserJSON = bodyParser.json()  //Permitindo a utilização do JSON no
 
 const router = express.Router()           //Cria um objeto de rota para os Endpoints
 
-const controllerEstabelecimento = require('../controller/cadastro_estabelecimento/estabelecimento/controller_estabelecimento.js')
+const controllerEmail = require('../../controller/cadastro_estabelecimento/email/controller_email.js')
 
 // ================= ENDPOINTS ====================
 router.post('/', bodyParserJSON, async function (request, response) {
@@ -21,7 +21,7 @@ router.post('/', bodyParserJSON, async function (request, response) {
 
     let contentType = request.headers['content-type']
 
-    let result = await controllerEstabelecimento.inserirNovoEstabelecimento(dados, contentType)
+    let result = await controllerEmail.inserirNovoEmail(dados, contentType)
 
     response.status(result.status_code)
     response.json(result)
@@ -29,7 +29,7 @@ router.post('/', bodyParserJSON, async function (request, response) {
 
 router.get('/', async function (request, response) {
 
-    let result = await controllerEstabelecimento.listarEstabelecimento()
+    let result = await controllerEmail.listarEmail()
 
     response.status(result.status_code)
     response.json(result)
@@ -38,7 +38,7 @@ router.get('/', async function (request, response) {
 router.get('/:id', async function (request, response) {
 
     let id = request.params.id
-    let result = await controllerEstabelecimento.buscarEstabelecimento(id)
+    let result = await controllerEmail.buscarEmail(id)
 
     response.status(result.status_code)
     response.json(result)
@@ -52,7 +52,7 @@ router.put('/:id', bodyParserJSON, async function (request, response) {
 
     let dados = request.body
 
-    let result = await controllerEstabelecimento.atualizarEstabelecimento(dados, id, contentType)
+    let result = await controllerEmail.atualizarEmail(dados, id, contentType)
     response.status(result.status_code)
     response.json(result)
 })

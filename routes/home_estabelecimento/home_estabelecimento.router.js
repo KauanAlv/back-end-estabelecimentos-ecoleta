@@ -9,10 +9,10 @@ const express = require('express') // Import do express
 
 const router = express.Router() // Cria um objeto de rota para os Endpoints
 
-const controllerHomeEstabelecimento = require('../controller/home_estabelecimento/controller_home_estabelecimento.js')
+const controllerHomeEstabelecimento = require('../../controller/home_estabelecimento/controller_home_estabelecimento.js')
 
 // IMPORT DO MIDDLEWARE DE AUTENTICAÇÃO
-const auth = require('../middleware/auth.js')
+const auth = require('../../middleware/auth.js')
 
 // ================= ENDPOINTS ====================
 router.get('/', auth.verifyToken, async function (request, response) {
