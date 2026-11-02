@@ -27,4 +27,38 @@ router.get('/', auth.verifyToken, async function (request, response) {
     response.json(result)
 })
 
+router.get('/cancelado/:idResiduo', auth.verifyToken, async function (request, response) {
+
+    // Obtém o ID da empresa autenticada pelo JWT
+    let idEstabelecimento = request.id_estabelecimento
+
+    // Obtém o ID do resíduo da URL
+    let idResiduo = request.params.idResiduo
+
+    // Consulta os dados do Histórico
+    let result = await controllerHistoricoEstabelecimento.buscarCancelarHistoricoEstabelecimento(idResiduo, idEstabelecimento)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+
+
+router.get('/concluido/:idColeta', auth.verifyToken, async function (request, response) {
+
+    // Obtém o ID da empresa autenticada pelo JWT
+    let idEstabelecimento = request.id_estabelecimento
+
+    // Obtém o ID do resíduo da URL
+    let idColeta = request.params.idColeta
+
+    // Consulta os dados do Histórico
+    let result = await controllerHistoricoEstabelecimento.buscarConcluirHistoricoEstabelecimento(idColeta, idEstabelecimento)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+
+
 module.exports = router

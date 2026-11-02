@@ -25,6 +25,36 @@ const buscarHistoricoEstabelecimento = async function (idEstabelecimento) {
     }
 }
 
+const buscarCancelarHistoricoEstabelecimento = async function (idResiduo, idEstabelecimento) {
+    let customMessages = JSON.parse(JSON.stringify(configMessages))
+
+    try {
+        let result = await HistoricoEstabelecimentoService.buscarCanceladaHistoricoEstabelecimentoService(idResiduo, idEstabelecimento)
+
+        return result
+
+        
+    } catch (error) {
+        return customMessages.ERROR_INTERNAL_SERVER_CONTROLLER // 500, na controller
+    }
+}
+
+const buscarConcluirHistoricoEstabelecimento = async function (idColeta, idEstabelecimento) {
+    let customMessages = JSON.parse(JSON.stringify(configMessages))
+
+    try {
+        let result = await HistoricoEstabelecimentoService.buscarConcluidaHistoricoEstabelecimentoService(idColeta, idEstabelecimento)
+
+        return result
+
+        
+    } catch (error) {
+        return customMessages.ERROR_INTERNAL_SERVER_CONTROLLER // 500, na controller
+    }
+}
+
 module.exports = {
-    buscarHistoricoEstabelecimento
+    buscarHistoricoEstabelecimento,
+    buscarCancelarHistoricoEstabelecimento,
+    buscarConcluirHistoricoEstabelecimento
 }

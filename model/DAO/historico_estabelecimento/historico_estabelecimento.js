@@ -26,7 +26,42 @@ const selectHistoricoEstabelecimento = async function (idEstabelecimento) {
 }
 
 
+const selectCancelarHistoricoEstabelecimento = async function (idResiduo, idEstabelecimento) {
+    try {
+        let sql = `select * from vw_detalhe_residuo_cancelado_estabelecimento where id_residuo = ? and id_estabelecimento = ?;`
+
+        let result = await knexConection.raw(sql, [idResiduo, idEstabelecimento])
+
+        if (Array.isArray(result[0]))
+            return result[0]
+        else
+            return false
+
+    } catch (error) {
+        return false
+    }
+}
+
+
+const selectConcluidoHistoricoEstabelecimento = async function (idColeta, idEstabelecimento) {
+    try {
+        let sql = `select * from vw_detalhe_coleta_concluida_estabelecimento where id_coleta = ? and id_estabelecimento = ?;`
+
+        let result = await knexConection.raw(sql, [idColeta, idEstabelecimento])
+
+        if (Array.isArray(result[0]))
+            return result[0]
+        else
+            return false
+
+    } catch (error) {
+        return false
+    }
+}
+
 
 module.exports = {
-    selectHistoricoEstabelecimento
+    selectHistoricoEstabelecimento,
+    selectCancelarHistoricoEstabelecimento,
+    selectConcluidoHistoricoEstabelecimento
 }

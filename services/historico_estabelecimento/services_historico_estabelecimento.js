@@ -36,8 +36,44 @@ const buscarHistoricoEstabelecimentoService = async function (idEstabelecimento)
             return customMessages.ERROR_NOT_FOUND // 404, empresa não encontrada
 
 
+        // Formata a data disponível das ofertas
+        for (let oferta of resultResumo) {
+            oferta.data_disponivel = formatarData(oferta.data_disponivel)
+
+            // Remove o atributo utilizado apenas para ordenação
+            delete oferta.data_hora_evento
+        }
+
+        // Prepara a resposta
+        let resposta = {
+            resumo: resultResumo
+        }
+
+        customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_RESPONSE.status
+        customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_RESPONSE.status_code
+        customMessages.DEFAULT_MESSAGE.message = customMessages.SUCCESS_RESPONSE.message
+        customMessages.DEFAULT_MESSAGE.response = resposta
+
+        return customMessages.DEFAULT_MESSAGE // 200, consulta realizada
+
+    } catch (error) {
+        return customMessages.ERROR_INTERNAL_SERVER_SERVICES // 500, na services
+    }
+}
+
+const buscarCanceladaHistoricoEstabelecimentoService = async function (idResiduo, idEstabelecimento) {
+    let customMessages = JSON.parse(JSON.stringify(configMessages))
+
+    try {
+        let resultResumo = await historicoEstabelecimentoDAO.selectCancelarHistoricoEstabelecimento(idResiduo, idEstabelecimento)
+
         if (resultResumo === false)
             return customMessages.ERROR_INTERNAL_SERVER_MODEL // 500, na model
+
+        // Verifica se a empresa foi encontrada
+        if (resultResumo.length === 0)
+            return customMessages.ERROR_NOT_FOUND // 404, empresa não encontrada
+
 
         // Formata a data disponível das ofertas
         for (let oferta of resultResumo) {
@@ -64,6 +100,50 @@ const buscarHistoricoEstabelecimentoService = async function (idEstabelecimento)
     }
 }
 
+
+const buscarConcluidaHistoricoEstabelecimentoService = async function (idColeta, idEstabelecimento) {
+    let customMessages = JSON.parse(JSON.stringify(configMessages))
+
+    try {
+        let resultResumo = await historicoEstabelecimentoDAO.selectConcluidoHistoricoEstabelecimento(idColeta, idEstabelecimento)
+
+        if (resultResumo === false)
+            return customMessages.ERROR_INTERNAL_SERVER_MODEL // 500, na model
+
+        // Verifica se a empresa foi encontrada
+        if (resultResumo.length === 0)
+            return customMessages.ERROR_NOT_FOUND // 404, empresa não encontrada
+
+
+        // Formata a data disponível das ofertas
+        for (let oferta of resultResumo) {
+            oferta.data_disponivel = formatarData(oferta.data_disponivel)
+
+            // Remove o atributo utilizado apenas para ordenação
+            delete oferta.data_hora_evento
+        }
+
+        // Prepara a resposta
+        let resposta = {
+            resumo: resultResumo
+        }
+
+        customMessages.DEFAULT_MESSAGE.status = customMessages.SUCCESS_RESPONSE.status
+        customMessages.DEFAULT_MESSAGE.status_code = customMessages.SUCCESS_RESPONSE.status_code
+        customMessages.DEFAULT_MESSAGE.message = customMessages.SUCCESS_RESPONSE.message
+        customMessages.DEFAULT_MESSAGE.response = resposta
+
+        return customMessages.DEFAULT_MESSAGE // 200, consulta realizada
+
+    } catch (error) {
+        return customMessages.ERROR_INTERNAL_SERVER_SERVICES // 500, na services
+    }
+}
+
+
+
 module.exports = {
-    buscarHistoricoEstabelecimentoService
+    buscarHistoricoEstabelecimentoService,
+    buscarCanceladaHistoricoEstabelecimentoService,
+    buscarConcluidaHistoricoEstabelecimentoService
 }
