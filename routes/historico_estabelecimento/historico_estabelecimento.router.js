@@ -44,7 +44,7 @@ router.get('/cancelado/:idResiduo', auth.verifyToken, async function (request, r
 
 
 
-router.get('/concluido/:idColeta', auth.verifyToken, async function (request, response) {
+router.get('/concluida/:idColeta', auth.verifyToken, async function (request, response) {
 
     // Obtém o ID da empresa autenticada pelo JWT
     let idEstabelecimento = request.id_estabelecimento
