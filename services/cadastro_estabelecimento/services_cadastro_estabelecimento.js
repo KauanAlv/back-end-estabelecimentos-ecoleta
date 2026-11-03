@@ -62,8 +62,10 @@ const cadastrarEstabelecimentoService = async function (estabelecimento) {
         if (empresaExistente === false)
             return customMessages.ERROR_INTERNAL_SERVER_MODEL // 500, na model
 
-        if (empresaExistente.length > 0)
+        if (empresaExistente.length > 0) {
+            customMessages.ERROR_CONFLICT.message = 'Não foi possível realizar o cadastro, pois alguns dados informados já estão cadastrados.'
             return customMessages.ERROR_CONFLICT //  409, Dados já cadastrados
+        }
 
         // Prepara os dados do endereço
         let endereco = {
