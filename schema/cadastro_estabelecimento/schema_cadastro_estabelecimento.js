@@ -156,6 +156,16 @@ const cadastroEstabelecimentoSchema = Joi.object({
             'string.max': 'A Senha deve possuir no máximo 30 caracteres.',
             'any.required': 'O campo Senha é obrigatório.',
             'string.base': 'A Senha deve ser um texto.'
+        }),
+
+    confirmar_senha: Joi.string()
+        .valid(Joi.ref('senha'))
+        .required()
+        .messages({
+            'string.empty': 'O campo Confirmar Senha não pode ficar vazio.',
+            'any.only': 'A confirmação da senha deve ser igual à senha informada.',
+            'any.required': 'O campo Confirmar Senha é obrigatório.',
+            'string.base': 'A confirmação da senha deve ser um texto.'
         })
 })
 
