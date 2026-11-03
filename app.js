@@ -74,6 +74,16 @@ const historicoEstabelecimento = require('./routes/historico_estabelecimento/his
 app.use('/v1/ecoleta/estabelecimento/historico', historicoEstabelecimento)
 
 
+// TELA DE PERFIL
+// ================= TELA DE PERFIL ESTABELECIMENTO =================
+const perfilEstabelecimento = require('./routes/perfil_estabelecimento/perfil_estabelecimento.router.js')
+app.use('/v1/ecoleta/estabelecimento/perfil', perfilEstabelecimento)
+
+
+
+
+
+
 // ==========================
 //     ENDPOINTS AUXILIARES
 // ==========================
