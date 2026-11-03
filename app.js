@@ -48,7 +48,7 @@ const homeEstabelecimento = require('./routes/home_estabelecimento/home_estabele
 app.use('/v1/ecoleta/estabelecimento/home', homeEstabelecimento)
 
 
-// TELA DE MEUS RESÍDUOS HOME
+// TELA DE MEUS RESÍDUOS 
 // ================= MEUS RESÍDUOS ESTABELECIMENTO =================
 const meusResiduoEstabelecimento = require('./routes/meus_residuos_estabelecimento/meus_residuos_estabelecimento.router.js')
 app.use('/v1/ecoleta/estabelecimento/meus-residuos', meusResiduoEstabelecimento)
@@ -62,6 +62,10 @@ app.use('/v1/ecoleta/estabelecimento/residuos', residuoEstabelecimento)
 // ================= MANIPULAR OFERTAS ESTABELECIMENTO =================
 const ofertaEstabelecimento = require('./routes/coletas_estabelecimento/ofertas_estabelecimento.router.js')
 app.use('/v1/ecoleta/estabelecimento/ofertas', ofertaEstabelecimento)
+
+// ================= COLETAS ESTABELECIMENTO =================
+const coletasEstabelecimento = require('./routes/coletas_estabelecimento/tela_coleta_estabelecimento.router.js')
+app.use('/v1/ecoleta/estabelecimento/coletas', coletasEstabelecimento)
 
 
 // TELA DE HISTÓRICO
