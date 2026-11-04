@@ -3,7 +3,7 @@
 //padronização dos retornos da API (cabeçalho)
 const DEFAULT_MESSAGE = {
     api_descreiption: "API para controlar o fluxo do estabelecimento no Ecoleta",
-    development: "Gabriel Renato",
+    developers: ["Gabriel Renato", "Kauan Alves"],
     version: "1.0.10.26",
     status: Boolean,
     status_code: Number,
