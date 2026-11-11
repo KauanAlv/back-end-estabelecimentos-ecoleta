@@ -16,7 +16,7 @@ const loginEstabelecimento = async function (dadosLogin, contentType) {
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
+        if (String(contentType ?? '').split(';')[0].trim().toUpperCase() === 'APPLICATION/JSON') {
 
             let result = await loginEstabelecimentoService.loginEstabelecimentoService(dadosLogin)
 

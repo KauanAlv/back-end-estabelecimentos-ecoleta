@@ -30,7 +30,7 @@ const atualizarPerfilEstabelecimento = async function (estabelecimento, idEstabe
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
+        if (String(contentType ?? '').split(';')[0].trim().toUpperCase() === 'APPLICATION/JSON') {
 
             let result = await perfilEstabelecimentoService.atualizarPerfilEstabelecimentoService(estabelecimento, idEstabelecimento)
 
@@ -50,7 +50,7 @@ const alterarSenhaEstabelecimento = async function (dadosSenha, idEstabeleciment
     let customMessages = JSON.parse(JSON.stringify(configMessages))
 
     try {
-        if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
+        if (String(contentType ?? '').split(';')[0].trim().toUpperCase() === 'APPLICATION/JSON') {
 
             let result = await perfilEstabelecimentoService.alterarSenhaEstabelecimentoService(dadosSenha, idEstabelecimento)
 
