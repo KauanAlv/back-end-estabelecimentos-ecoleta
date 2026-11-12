@@ -11,7 +11,7 @@ const knexConection = require('../../../global_knex/global_knex.js')
 // Consulta os dados para a tela de Meus Resíduos
 const selectMeusResiduosEstabelecimento = async function (idEstabelecimento) {
     try {          
-        let sql = `select * from vw_meus_residuos_estabelecimento where id_estabelecimento = ?;`
+        let sql = `select * from vw_meus_residuos_estabelecimento where id_estabelecimento = ? order by id_residuo desc;`
 
 
         let result = await knexConection.raw(sql, [idEstabelecimento])
