@@ -79,11 +79,6 @@ app.use('/v1/ecoleta/estabelecimento/historico', historicoEstabelecimento)
 const perfilEstabelecimento = require('./routes/perfil_estabelecimento/perfil_estabelecimento.router.js')
 app.use('/v1/ecoleta/estabelecimento/perfil', perfilEstabelecimento)
 
-
-
-
-
-
 // ==========================
 //     ENDPOINTS AUXILIARES
 // ==========================
@@ -95,29 +90,30 @@ app.use('/v1/ecoleta/tipo-material', tipoMaterial)
 
 
 
-// ================= EMAIL =================
-const emailRouter = require('./routes/cadastro_estabelecimento/email.router.js')
-app.use('/v1/ecoleta/email', emailRouter)
+// ENDPOINTs QUE FORAM USADOS PARA TESTE
+// // ================= EMAIL =================
+// const emailRouter = require('./routes/cadastro_estabelecimento/email.router.js')
+// app.use('/v1/ecoleta/email', emailRouter)
 
-// ================= TELEFONE =================
-const telefoneRouter = require('./routes/cadastro_estabelecimento/telefone.router.js')
-app.use('/v1/ecoleta/telefone', telefoneRouter)
+// // ================= TELEFONE =================
+// const telefoneRouter = require('./routes/cadastro_estabelecimento/telefone.router.js')
+// app.use('/v1/ecoleta/telefone', telefoneRouter)
 
-// ================= ESTADO =================
-const estadoRouter = require('./routes/cadastro_estabelecimento/estado.router.js')
-app.use('/v1/ecoleta/estado', estadoRouter)
+// // ================= ESTADO =================
+// const estadoRouter = require('./routes/cadastro_estabelecimento/estado.router.js')
+// app.use('/v1/ecoleta/estado', estadoRouter)
 
-// ================= CIDADE =================
-const cidadeRouter = require('./routes/cadastro_estabelecimento/cidade.router.js')
-app.use('/v1/ecoleta/cidade', cidadeRouter)
+// // ================= CIDADE =================
+// const cidadeRouter = require('./routes/cadastro_estabelecimento/cidade.router.js')
+// app.use('/v1/ecoleta/cidade', cidadeRouter)
 
-// ================= ENDERECO =================
-const enderecoRouter = require('./routes/cadastro_estabelecimento/endereco.router.js')
-app.use('/v1/ecoleta/endereco', enderecoRouter)
+// // ================= ENDERECO =================
+// const enderecoRouter = require('./routes/cadastro_estabelecimento/endereco.router.js')
+// app.use('/v1/ecoleta/endereco', enderecoRouter)
 
-// ================= ESTABELECIMENTO =================
-const estabelecimentoRouter = require('./routes/cadastro_estabelecimento/estabelecimento.router.js')
-app.use('/v1/ecoleta/estabelecimento', estabelecimentoRouter)
+// // ================= ESTABELECIMENTO =================
+// const estabelecimentoRouter = require('./routes/cadastro_estabelecimento/estabelecimento.router.js')
+// app.use('/v1/ecoleta/estabelecimento', estabelecimentoRouter)
 
 // ================= START-API =================
 app.listen(8000, function () {
