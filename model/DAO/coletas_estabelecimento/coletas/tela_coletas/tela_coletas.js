@@ -11,7 +11,7 @@ const knexConection = require('../../../../global_knex/global_knex.js')
 // Consulta os dados para a tela de Histórico
 const selectAllColetasEstabelecimento = async function (idEstabelecimento) {
     try {
-        let sql = `select * from vw_coletas_estabelecimento where id_estabelecimento = ?;`
+        let sql = `select * from vw_coletas_estabelecimento where id_estabelecimento = ? order by id_residuo desc;`
 
         let result = await knexConection.raw(sql, [idEstabelecimento])
 
